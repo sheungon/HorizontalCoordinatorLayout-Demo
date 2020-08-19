@@ -18,18 +18,20 @@ package com.agehua.horizontalcoordinatordemo;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.v4.math.MathUtils;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.math.MathUtils;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import java.util.List;
 
 /**
+ *
  */
 abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
 
@@ -39,10 +41,15 @@ abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
     private int mVerticalLayoutGap = 0;
     private int mOverlayTop;
 
-    public HeaderScrollingViewBehavior() {}
+    public HeaderScrollingViewBehavior() {
+    }
 
     public HeaderScrollingViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    private static int resolveGravity(int gravity) {
+        return gravity == Gravity.NO_GRAVITY ? GravityCompat.START | Gravity.TOP : gravity;
     }
 
     @Override
@@ -107,7 +114,7 @@ abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
             if (layoutDirection == 0) {// 水平
                 available.set(header.getRight() + lp.leftMargin,
                         parent.getTop() + lp.topMargin,
-                        parent.getWidth() - parent.getPaddingRight()- lp.rightMargin,
+                        parent.getWidth() - parent.getPaddingRight() - lp.rightMargin,
                         parent.getHeight() + header.getBottom() - parent.getPaddingBottom() - lp.bottomMargin);
             } else {
                 available.set(parent.getPaddingLeft() + lp.leftMargin,
@@ -151,10 +158,6 @@ abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
                 (int) (getOverlapRatioForOffset(header) * mOverlayTop), 0, mOverlayTop);
     }
 
-    private static int resolveGravity(int gravity) {
-        return gravity == Gravity.NO_GRAVITY ? GravityCompat.START | Gravity.TOP : gravity;
-    }
-
     abstract View findFirstDependency(List<View> views);
 
     int getScrollRange(View v) {
@@ -170,15 +173,15 @@ abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
 
     /**
      *
+     */
+    public final int getOverlayTop() {
+        return mOverlayTop;
+    }
+
+    /**
      * @param overlayTop the distance in px
      */
     public final void setOverlayTop(int overlayTop) {
         mOverlayTop = overlayTop;
-    }
-
-    /**
-     */
-    public final int getOverlayTop() {
-        return mOverlayTop;
     }
 }

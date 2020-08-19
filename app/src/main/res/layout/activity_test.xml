@@ -36,13 +36,13 @@
         </com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout>
     </com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="#1d9d29"
         app:layout_behavior="com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout$ScrollingViewBehavior">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </com.agehua.horizontalcoordinatordemo.HorizontalCoordinatorLayout>

@@ -17,14 +17,15 @@
 package com.agehua.horizontalcoordinatordemo;
 
 import android.content.Context;
-import android.support.v4.math.MathUtils;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
+
+import androidx.core.math.MathUtils;
+import androidx.core.view.ViewCompat;
 
 /**
  * See {@link HeaderScrollingViewBehavior}.
@@ -34,17 +35,16 @@ import android.widget.OverScroller;
 abstract class HorizontalHeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
 
     private static final int INVALID_POINTER = -1;
-
-    private Runnable mFlingRunnable;
     OverScroller mScroller;
-
+    private Runnable mFlingRunnable;
     private boolean mIsBeingDragged;
     private int mActivePointerId = INVALID_POINTER;
     private int mLastMotionX;
     private int mTouchSlop = -1;
     private VelocityTracker mVelocityTracker;
 
-    public HorizontalHeaderBehavior() {}
+    public HorizontalHeaderBehavior() {
+    }
 
     public HorizontalHeaderBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -236,7 +236,7 @@ abstract class HorizontalHeaderBehavior<V extends View> extends ViewOffsetBehavi
 
         mScroller.fling(
                 getLeftAndRightOffset(), 0, // curr
-                Math.round(velocityX),0, // velocity.
+                Math.round(velocityX), 0, // velocity.
                 minOffset, maxOffset,// x
                 0, 0  // y
         );

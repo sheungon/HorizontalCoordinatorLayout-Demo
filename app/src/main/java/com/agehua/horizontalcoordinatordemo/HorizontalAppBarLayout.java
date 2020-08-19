@@ -7,17 +7,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.math.MathUtils;
-import android.support.v4.util.ObjectsCompat;
-import android.support.v4.view.AbsSavedState;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +14,25 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.math.MathUtils;
+import androidx.core.util.ObjectsCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.customview.view.AbsSavedState;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 @HorizontalCoordinatorLayout.DefaultBehavior(HorizontalAppBarLayout.Behavior.class)
 public class HorizontalAppBarLayout extends LinearLayout {
@@ -41,28 +42,16 @@ public class HorizontalAppBarLayout extends LinearLayout {
     static final int PENDING_ACTION_COLLAPSED = 0x2;
     static final int PENDING_ACTION_ANIMATE_ENABLED = 0x4;
     static final int PENDING_ACTION_FORCE = 0x8;
-
-    public interface OnOffsetChangedListener {
-        void onOffsetChanged(HorizontalAppBarLayout appBarLayout, int verticalOffset);
-    }
-
     private static final int INVALID_SCROLL_RANGE = -1;
-
     private int mTotalScrollRange = INVALID_SCROLL_RANGE;
     private int mDownPreScrollRange = INVALID_SCROLL_RANGE;
     private int mDownScrollRange = INVALID_SCROLL_RANGE;
-
     private boolean mHaveChildWithInterpolator;
-
     private int mPendingAction = PENDING_ACTION_NONE;
-
     private WindowInsetsCompat mLastInsets;
-
     private List<OnOffsetChangedListener> mListeners;
-
     private boolean mCollapsible;
     private boolean mCollapsed;
-
     private int[] mTmpStatesArray;
 
     public HorizontalAppBarLayout(Context context) {
@@ -95,7 +84,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         a.recycle();
 
         ViewCompat.setOnApplyWindowInsetsListener(this,
-                new android.support.v4.view.OnApplyWindowInsetsListener() {
+                new androidx.core.view.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsetsCompat onApplyWindowInsets(View v,
                                                                   WindowInsetsCompat insets) {
@@ -108,7 +97,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
      * Add a listener that will be called when the offset of this {@link HorizontalAppBarLayout} changes.
      *
      * @param listener The listener that will be called when the offset changes.]
-     *
      * @see #removeOnOffsetChangedListener(HorizontalAppBarLayout.OnOffsetChangedListener)
      */
     public void addOnOffsetChangedListener(HorizontalAppBarLayout.OnOffsetChangedListener listener) {
@@ -198,7 +186,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
      *
      * @param expanded true if the layout should be fully expanded, false if it should
      *                 be fully collapsed
-     *
      * @attr ref android.support.design.R.styleable#AppBarLayout_expanded
      */
     public void setExpanded(boolean expanded) {
@@ -213,8 +200,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
      *
      * @param expanded true if the layout should be fully expanded, false if it should
      *                 be fully collapsed
-     * @param animate Whether to animate to the new state
-     *
+     * @param animate  Whether to animate to the new state
      * @attr ref android.support.design.R.styleable#AppBarLayout_expanded
      */
     public void setExpanded(boolean expanded, boolean animate) {
@@ -470,9 +456,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
         return false;
     }
 
-
-
-
     int getPendingAction() {
         return mPendingAction;
     }
@@ -503,61 +486,21 @@ public class HorizontalAppBarLayout extends LinearLayout {
         return insets;
     }
 
+    public interface OnOffsetChangedListener {
+        void onOffsetChanged(HorizontalAppBarLayout appBarLayout, int verticalOffset);
+    }
+
     public static class LayoutParams extends LinearLayout.LayoutParams {
-
-        /** @hide */
-        @RestrictTo(LIBRARY_GROUP)
-        @IntDef(flag=true, value={
-                SCROLL_FLAG_SCROLL,
-                SCROLL_FLAG_EXIT_UNTIL_COLLAPSED,
-                SCROLL_FLAG_ENTER_ALWAYS,
-                SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED,
-                SCROLL_FLAG_SNAP
-        })
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface ScrollFlags {}
-
-        @IntDef({
-                COLLAPSE_MODE_OFF,
-                COLLAPSE_MODE_PIN,
-                COLLAPSE_MODE_PARALLAX
-        })
-        @Retention(RetentionPolicy.SOURCE)
-        @interface CollapseMode {}
 
         public static final int COLLAPSE_MODE_OFF = 0;
         public static final int COLLAPSE_MODE_PIN = 1;
         public static final int COLLAPSE_MODE_PARALLAX = 2;
-
-        int mCollapseMode = COLLAPSE_MODE_OFF;
-        float mParallaxMult = 0.5f;
-
-        ///////////////// 添加collapseMode支持 /////////////////
-        public void setCollapseMode(@LayoutParams.CollapseMode int collapseMode) {
-            mCollapseMode = collapseMode;
-        }
-
-
-        @LayoutParams.CollapseMode
-        public int getCollapseMode() {
-            return mCollapseMode;
-        }
-
-
-        public void setParallaxMultiplier(float multiplier) {
-            mParallaxMult = multiplier;
-        }
-
-        public float getParallaxMultiplier() {
-            return mParallaxMult;
-        }
         /**
          * The view will be scroll in direct relation to scroll events. This flag needs to be
          * set for any of the other flags to take effect. If any sibling views
          * before this one do not have this flag, then this value has no effect.
          */
         public static final int SCROLL_FLAG_SCROLL = 0x1;
-
         /**
          * When exiting (scrolling off screen) the view will be scrolled until it is
          * 'collapsed'. The collapsed height is defined by the view's minimum height.
@@ -566,14 +509,12 @@ public class HorizontalAppBarLayout extends LinearLayout {
          * @see View#setMinimumHeight(int)
          */
         public static final int SCROLL_FLAG_EXIT_UNTIL_COLLAPSED = 0x2;
-
         /**
          * When entering (scrolling on screen) the view will scroll on any downwards
          * scroll event, regardless of whether the scrolling view is also scrolling. This
          * is commonly referred to as the 'quick return' pattern.
          */
         public static final int SCROLL_FLAG_ENTER_ALWAYS = 0x4;
-
         /**
          * An additional flag for 'enterAlways' which modifies the returning view to
          * only initially scroll back to it's collapsed height. Once the scrolling view has
@@ -584,7 +525,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
          * @see View#setMinimumHeight(int)
          */
         public static final int SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED = 0x8;
-
         /**
          * Upon a scroll ending, if the view is only partially visible then it will be snapped
          * and scrolled to it's closest edge. For example, if the view only has it's bottom 25%
@@ -592,7 +532,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
          * is visible then it will be scrolled fully into view.
          */
         public static final int SCROLL_FLAG_SNAP = 0x10;
-
         /**
          * Internal flags which allows quick checking features
          */
@@ -600,7 +539,8 @@ public class HorizontalAppBarLayout extends LinearLayout {
         static final int FLAG_SNAP = SCROLL_FLAG_SCROLL | SCROLL_FLAG_SNAP;
         static final int COLLAPSIBLE_FLAGS = SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                 | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
-
+        int mCollapseMode = COLLAPSE_MODE_OFF;
+        float mParallaxMult = 0.5f;
         int mScrollFlags = SCROLL_FLAG_SCROLL;
         Interpolator mScrollInterpolator;
 
@@ -629,11 +569,9 @@ public class HorizontalAppBarLayout extends LinearLayout {
         public LayoutParams(int width, int height) {
             super(width, height);
         }
-
         public LayoutParams(int width, int height, float weight) {
             super(width, height, weight);
         }
-
         public LayoutParams(ViewGroup.LayoutParams p) {
             super(p);
         }
@@ -641,7 +579,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
         public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
-
         @RequiresApi(19)
         public LayoutParams(LinearLayout.LayoutParams source) {
             // The copy constructor called here only exists on API 19+.
@@ -656,27 +593,29 @@ public class HorizontalAppBarLayout extends LinearLayout {
             mScrollInterpolator = source.mScrollInterpolator;
         }
 
-        /**
-         * Set the scrolling flags.
-         *
-         * @param flags bitwise int of {@link #SCROLL_FLAG_SCROLL},
-         *             {@link #SCROLL_FLAG_EXIT_UNTIL_COLLAPSED}, {@link #SCROLL_FLAG_ENTER_ALWAYS},
-         *             {@link #SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED} and {@link #SCROLL_FLAG_SNAP }.
-         *
-         * @see #getScrollFlags()
-         *
-         * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollFlags
-         */
-        public void setScrollFlags(@HorizontalAppBarLayout.LayoutParams.ScrollFlags int flags) {
-            mScrollFlags = flags;
+        @LayoutParams.CollapseMode
+        public int getCollapseMode() {
+            return mCollapseMode;
+        }
+
+        ///////////////// 添加collapseMode支持 /////////////////
+        public void setCollapseMode(@LayoutParams.CollapseMode int collapseMode) {
+            mCollapseMode = collapseMode;
+        }
+
+        public float getParallaxMultiplier() {
+            return mParallaxMult;
+        }
+
+        public void setParallaxMultiplier(float multiplier) {
+            mParallaxMult = multiplier;
         }
 
         /**
          * Returns the scrolling flags.
          *
-         * @see #setScrollFlags(int)
-         *
          * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollFlags
+         * @see #setScrollFlags(int)
          */
         @HorizontalAppBarLayout.LayoutParams.ScrollFlags
         public int getScrollFlags() {
@@ -684,16 +623,16 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         /**
-         * Set the interpolator to when scrolling the view associated with this
-         * {@link HorizontalAppBarLayout.LayoutParams}.
+         * Set the scrolling flags.
          *
-         * @param interpolator the interpolator to use, or null to use normal 1-to-1 scrolling.
-         *
-         * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollInterpolator
-         * @see #getScrollInterpolator()
+         * @param flags bitwise int of {@link #SCROLL_FLAG_SCROLL},
+         *              {@link #SCROLL_FLAG_EXIT_UNTIL_COLLAPSED}, {@link #SCROLL_FLAG_ENTER_ALWAYS},
+         *              {@link #SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED} and {@link #SCROLL_FLAG_SNAP }.
+         * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollFlags
+         * @see #getScrollFlags()
          */
-        public void setScrollInterpolator(Interpolator interpolator) {
-            mScrollInterpolator = interpolator;
+        public void setScrollFlags(@HorizontalAppBarLayout.LayoutParams.ScrollFlags int flags) {
+            mScrollFlags = flags;
         }
 
         /**
@@ -708,11 +647,47 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         /**
+         * Set the interpolator to when scrolling the view associated with this
+         * {@link HorizontalAppBarLayout.LayoutParams}.
+         *
+         * @param interpolator the interpolator to use, or null to use normal 1-to-1 scrolling.
+         * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollInterpolator
+         * @see #getScrollInterpolator()
+         */
+        public void setScrollInterpolator(Interpolator interpolator) {
+            mScrollInterpolator = interpolator;
+        }
+
+        /**
          * Returns true if the scroll flags are compatible for 'collapsing'
          */
         boolean isCollapsible() {
             return (mScrollFlags & SCROLL_FLAG_SCROLL) == SCROLL_FLAG_SCROLL
                     && (mScrollFlags & COLLAPSIBLE_FLAGS) != 0;
+        }
+
+        /**
+         * @hide
+         */
+        @RestrictTo(LIBRARY_GROUP)
+        @IntDef(flag = true, value = {
+                SCROLL_FLAG_SCROLL,
+                SCROLL_FLAG_EXIT_UNTIL_COLLAPSED,
+                SCROLL_FLAG_ENTER_ALWAYS,
+                SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED,
+                SCROLL_FLAG_SNAP
+        })
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface ScrollFlags {
+        }
+
+        @IntDef({
+                COLLAPSE_MODE_OFF,
+                COLLAPSE_MODE_PIN,
+                COLLAPSE_MODE_PARALLAX
+        })
+        @Retention(RetentionPolicy.SOURCE)
+        @interface CollapseMode {
         }
     }
 
@@ -723,42 +698,39 @@ public class HorizontalAppBarLayout extends LinearLayout {
     public static class Behavior extends HorizontalHeaderBehavior<HorizontalAppBarLayout> {
         private static final int MAX_OFFSET_ANIMATION_DURATION = 600; // ms
         private static final int INVALID_POSITION = -1;
-
-        /**
-         * Callback to allow control over any {@link HorizontalAppBarLayout} dragging.
-         */
-        public static abstract class DragCallback {
-            /**
-             * Allows control over whether the given {@link HorizontalAppBarLayout} can be dragged or not.
-             *
-             * <p>Dragging is defined as a direct touch on the AppBarLayout with movement. This
-             * call does not affect any nested scrolling.</p>
-             *
-             * @return true if we are in a position to scroll the AppBarLayout via a drag, false
-             *         if not.
-             */
-            public abstract boolean canDrag(@NonNull HorizontalAppBarLayout appBarLayout);
-        }
-
         private int mOffsetDelta;
         private ValueAnimator mOffsetAnimator;
-
         private int mOffsetToChildIndexOnLayout = INVALID_POSITION;
         private boolean mOffsetToChildIndexOnLayoutIsMinWidth;
         private float mOffsetToChildIndexOnLayoutPerc;
-
         private WeakReference<View> mLastNestedScrollingChildRef;
         private HorizontalAppBarLayout.Behavior.DragCallback mOnDragCallback;
-
-        public Behavior() {}
+        public Behavior() {
+        }
 
         public Behavior(Context context, AttributeSet attrs) {
             super(context, attrs);
         }
 
+        private static boolean checkFlag(final int flags, final int check) {
+            return (flags & check) == check;
+        }
+
+        private static View getAppBarChildOnOffset(final HorizontalAppBarLayout layout, final int offset) {
+            final int absOffset = Math.abs(offset);
+            for (int i = 0, z = layout.getChildCount(); i < z; i++) {
+                final View child = layout.getChildAt(i);
+                if (absOffset >= child.getTop() && absOffset <= child.getBottom()) {
+                    return child;
+                }
+            }
+            return null;
+        }
+
         /**
          * NestedScrollView作为子View滑动时候会首先调用startNestedScroll(...)方法来询问父View即CoordinatorLayout是否需要消费事件，
          * CoordinatorLayout作为代理做发给对应Behavior，这里就分发给了AppBarLayout.Behavior
+         *
          * @return true 说明CoordinatorLayout需要进行消费事件的处理，然后回调AppBarLayout.Behavior.onNestedPreScroll()
          */
         @Override
@@ -835,7 +807,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         private void animateOffsetTo(final HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                final HorizontalAppBarLayout child, final int offset, float velocity) {
+                                     final HorizontalAppBarLayout child, final int offset, float velocity) {
             final int distance = Math.abs(getLeftRightOffsetForScrollingSibling() - offset);
 
             final int duration;
@@ -851,7 +823,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         private void animateOffsetWithDuration(final HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                final HorizontalAppBarLayout child, final int offset, final int duration) {
+                                               final HorizontalAppBarLayout child, final int offset, final int duration) {
             final int currentOffset = getLeftRightOffsetForScrollingSibling();
             if (currentOffset == offset) {
                 if (mOffsetAnimator != null && mOffsetAnimator.isRunning()) {
@@ -930,10 +902,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
                             MathUtils.clamp(newOffset, -abl.getTotalScrollRange(), 0), 0);
                 }
             }
-        }
-
-        private static boolean checkFlag(final int flags, final int check) {
-            return (flags & check) == check;
         }
 
         @Override
@@ -1148,8 +1116,8 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         private void updateAppBarLayoutDrawableState(final HorizontalCoordinatorLayout parent,
-                final HorizontalAppBarLayout layout, final int offset, final int direction,
-                final boolean forceJump) {
+                                                     final HorizontalAppBarLayout layout, final int offset, final int direction,
+                                                     final boolean forceJump) {
             final View child = getAppBarChildOnOffset(layout, offset);
             if (child != null) {
                 final HorizontalAppBarLayout.LayoutParams childLp = (HorizontalAppBarLayout.LayoutParams) child.getLayoutParams();
@@ -1199,17 +1167,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return false;
         }
 
-        private static View getAppBarChildOnOffset(final HorizontalAppBarLayout layout, final int offset) {
-            final int absOffset = Math.abs(offset);
-            for (int i = 0, z = layout.getChildCount(); i < z; i++) {
-                final View child = layout.getChildAt(i);
-                if (absOffset >= child.getTop() && absOffset <= child.getBottom()) {
-                    return child;
-                }
-            }
-            return null;
-        }
-
         @Override
         int getLeftRightOffsetForScrollingSibling() {
             return getLeftAndRightOffset() + mOffsetDelta;
@@ -1256,7 +1213,39 @@ public class HorizontalAppBarLayout extends LinearLayout {
             }
         }
 
+        /**
+         * Callback to allow control over any {@link HorizontalAppBarLayout} dragging.
+         */
+        public static abstract class DragCallback {
+            /**
+             * Allows control over whether the given {@link HorizontalAppBarLayout} can be dragged or not.
+             *
+             * <p>Dragging is defined as a direct touch on the AppBarLayout with movement. This
+             * call does not affect any nested scrolling.</p>
+             *
+             * @return true if we are in a position to scroll the AppBarLayout via a drag, false
+             * if not.
+             */
+            public abstract boolean canDrag(@NonNull HorizontalAppBarLayout appBarLayout);
+        }
+
         protected static class SavedState extends AbsSavedState {
+            public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
+                @Override
+                public HorizontalAppBarLayout.Behavior.SavedState createFromParcel(Parcel source, ClassLoader loader) {
+                    return new HorizontalAppBarLayout.Behavior.SavedState(source, loader);
+                }
+
+                @Override
+                public HorizontalAppBarLayout.Behavior.SavedState createFromParcel(Parcel source) {
+                    return new HorizontalAppBarLayout.Behavior.SavedState(source, null);
+                }
+
+                @Override
+                public HorizontalAppBarLayout.Behavior.SavedState[] newArray(int size) {
+                    return new HorizontalAppBarLayout.Behavior.SavedState[size];
+                }
+            };
             int firstVisibleChildIndex;
             float firstVisibleChildPercentageShown;
             boolean firstVisibleChildAtMinimumWidth;
@@ -1279,23 +1268,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
                 dest.writeFloat(firstVisibleChildPercentageShown);
                 dest.writeByte((byte) (firstVisibleChildAtMinimumWidth ? 1 : 0));
             }
-
-            public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
-                @Override
-                public HorizontalAppBarLayout.Behavior.SavedState createFromParcel(Parcel source, ClassLoader loader) {
-                    return new HorizontalAppBarLayout.Behavior.SavedState(source, loader);
-                }
-
-                @Override
-                public HorizontalAppBarLayout.Behavior.SavedState createFromParcel(Parcel source) {
-                    return new HorizontalAppBarLayout.Behavior.SavedState(source, null);
-                }
-
-                @Override
-                public HorizontalAppBarLayout.Behavior.SavedState[] newArray(int size) {
-                    return new HorizontalAppBarLayout.Behavior.SavedState[size];
-                }
-            };
         }
     }
 
@@ -1305,7 +1277,8 @@ public class HorizontalAppBarLayout extends LinearLayout {
      */
     public static class ScrollingViewBehavior extends HorizontalHeaderScrollingViewBehavior {
 
-        public ScrollingViewBehavior() {}
+        public ScrollingViewBehavior() {
+        }
 
         public ScrollingViewBehavior(Context context, AttributeSet attrs) {
             super(context, attrs);
@@ -1315,6 +1288,15 @@ public class HorizontalAppBarLayout extends LinearLayout {
             setOverlayLeft(a.getDimensionPixelSize(
                     R.styleable.ScrollingViewBehavior_Layout_behavior_overlapTop, 0));
             a.recycle();
+        }
+
+        private static int getAppBarLayoutOffset(HorizontalAppBarLayout abl) {
+            final HorizontalCoordinatorLayout.Behavior behavior =
+                    ((HorizontalCoordinatorLayout.LayoutParams) abl.getLayoutParams()).getBehavior();
+            if (behavior instanceof HorizontalAppBarLayout.Behavior) {
+                return ((HorizontalAppBarLayout.Behavior) behavior).getLeftRightOffsetForScrollingSibling();
+            }
+            return 0;
         }
 
         @Override
@@ -1386,15 +1368,6 @@ public class HorizontalAppBarLayout extends LinearLayout {
                 }
             }
             return 0f;
-        }
-
-        private static int getAppBarLayoutOffset(HorizontalAppBarLayout abl) {
-            final HorizontalCoordinatorLayout.Behavior behavior =
-                    ((HorizontalCoordinatorLayout.LayoutParams) abl.getLayoutParams()).getBehavior();
-            if (behavior instanceof HorizontalAppBarLayout.Behavior) {
-                return ((HorizontalAppBarLayout.Behavior) behavior).getLeftRightOffsetForScrollingSibling();
-            }
-            return 0;
         }
 
         @Override

@@ -21,52 +21,47 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
-import android.support.v4.math.MathUtils;
-import android.support.v4.util.ObjectsCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.math.MathUtils;
+import androidx.core.util.ObjectsCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 public class HorizontalCollapsingToolbarLayout extends FrameLayout {
 
     private static final int DEFAULT_SCRIM_ANIMATION_DURATION = 600;
-
+    Drawable mStatusBarScrim;
+    int mCurrentOffset;
+    WindowInsetsCompat mLastInsets;
     private boolean mRefreshToolbar = true;
     private int mToolbarId;
     private Toolbar mToolbar;
     private View mToolbarDirectChild;
     private View mDummyView;
-
     private boolean mCollapsingTitleEnabled;
     private boolean mDrawCollapsingTitle;
-
-    Drawable mStatusBarScrim;
     private int mScrimAlpha;
     private boolean mScrimsAreShown;
     private ValueAnimator mScrimAnimator;
     private long mScrimAnimationDuration;
     private int mScrimVisibleHeightTrigger = -1;
-
     private HorizontalAppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener;
-
-    int mCurrentOffset;
-
-    WindowInsetsCompat mLastInsets;
 
     public HorizontalCollapsingToolbarLayout(Context context) {
         this(context, null);
@@ -99,13 +94,31 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         setWillNotDraw(false);
 
         ViewCompat.setOnApplyWindowInsetsListener(this,
-                new android.support.v4.view.OnApplyWindowInsetsListener() {
+                new androidx.core.view.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsetsCompat onApplyWindowInsets(View v,
                                                                   WindowInsetsCompat insets) {
                         return onWindowInsetChanged(insets);
                     }
                 });
+    }
+
+    private static int getWidthWithMargins(@NonNull final View view) {
+        final ViewGroup.LayoutParams lp = view.getLayoutParams();
+        if (lp instanceof MarginLayoutParams) {
+            final MarginLayoutParams mlp = (MarginLayoutParams) lp;
+            return view.getWidth() + mlp.leftMargin + mlp.rightMargin;
+        }
+        return view.getWidth();
+    }
+
+    static ViewOffsetHelper getViewOffsetHelper(View view) {
+        ViewOffsetHelper offsetHelper = (ViewOffsetHelper) view.getTag(R.id.view_offset_helper);
+        if (offsetHelper == null) {
+            offsetHelper = new ViewOffsetHelper(view);
+            view.setTag(R.id.view_offset_helper, offsetHelper);
+        }
+        return offsetHelper;
     }
 
     @Override
@@ -336,7 +349,7 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
                 setMinimumWidth(getWidthWithMargins(mToolbarDirectChild));
             }
         } else {
-            for (int i = 0; i< getChildCount(); i++) {
+            for (int i = 0; i < getChildCount(); i++) {
                 View view = getChildAt(i);
                 LayoutParams lp = (LayoutParams) view.getLayoutParams();
                 if (lp.mCollapseMode == LayoutParams.COLLAPSE_MODE_PIN) {
@@ -345,26 +358,6 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
             }
         }
     }
-
-    private static int getWidthWithMargins(@NonNull final View view) {
-        final ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp instanceof MarginLayoutParams) {
-            final MarginLayoutParams mlp = (MarginLayoutParams) lp;
-            return view.getWidth() + mlp.leftMargin + mlp.rightMargin;
-        }
-        return view.getWidth();
-    }
-
-    static ViewOffsetHelper getViewOffsetHelper(View view) {
-        ViewOffsetHelper offsetHelper = (ViewOffsetHelper) view.getTag(R.id.view_offset_helper);
-        if (offsetHelper == null) {
-            offsetHelper = new ViewOffsetHelper(view);
-            view.setTag(R.id.view_offset_helper, offsetHelper);
-        }
-        return offsetHelper;
-    }
-
-
 
     @Override
     protected void drawableStateChanged() {
@@ -405,21 +398,20 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
 //    }
 
     /**
-     * Set the duration used for scrim visibility animations.
-     *
-     * @param duration the duration to use in milliseconds
-     *
-     * @attr ref android.support.design.R.styleable#CollapsingToolbarLayout_scrimAnimationDuration
-     */
-    public void setScrimAnimationDuration(@IntRange(from = 0) final long duration) {
-        mScrimAnimationDuration = duration;
-    }
-
-    /**
      * Returns the duration in milliseconds used for scrim visibility animations.
      */
     public long getScrimAnimationDuration() {
         return mScrimAnimationDuration;
+    }
+
+    /**
+     * Set the duration used for scrim visibility animations.
+     *
+     * @param duration the duration to use in milliseconds
+     * @attr ref android.support.design.R.styleable#CollapsingToolbarLayout_scrimAnimationDuration
+     */
+    public void setScrimAnimationDuration(@IntRange(from = 0) final long duration) {
+        mScrimAnimationDuration = duration;
     }
 
     @Override
@@ -442,41 +434,34 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         return new LayoutParams(p);
     }
 
+    final int getMaxOffsetForPinChild(View child) {
+        final ViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        return getWidth()
+                - offsetHelper.getLayoutLeft()
+                - child.getWidth()
+                - lp.rightMargin;
+    }
+
     public static class LayoutParams extends FrameLayout.LayoutParams {
-
-        private static final float DEFAULT_PARALLAX_MULTIPLIER = 0.5f;
-
-        /** @hide */
-        @RestrictTo(LIBRARY_GROUP)
-        @IntDef({
-                COLLAPSE_MODE_OFF,
-                COLLAPSE_MODE_PIN,
-                COLLAPSE_MODE_PARALLAX
-        })
-        @Retention(RetentionPolicy.SOURCE)
-        @interface CollapseMode {
-        }
 
         /**
          * The view will act as normal with no collapsing behavior.
          */
         public static final int COLLAPSE_MODE_OFF = 0;
-
         /**
          * The view will pin in place until it reaches the bottom of the
          * {@link HorizontalCollapsingToolbarLayout}.
          */
         public static final int COLLAPSE_MODE_PIN = 1;
-
         /**
          * The view will scroll in a parallax fashion. See {@link #setParallaxMultiplier(float)}
          * to change the multiplier used.
          */
         public static final int COLLAPSE_MODE_PARALLAX = 2;
-
+        private static final float DEFAULT_PARALLAX_MULTIPLIER = 0.5f;
         int mCollapseMode = COLLAPSE_MODE_OFF;
         float mParallaxMult = DEFAULT_PARALLAX_MULTIPLIER;
-
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
 
@@ -514,6 +499,17 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         }
 
         /**
+         * Returns the requested collapse mode.
+         *
+         * @return the current mode. One of {@link #COLLAPSE_MODE_OFF}, {@link #COLLAPSE_MODE_PIN}
+         * or {@link #COLLAPSE_MODE_PARALLAX}.
+         */
+        @CollapseMode
+        public int getCollapseMode() {
+            return mCollapseMode;
+        }
+
+        /**
          * Set the collapse mode.
          *
          * @param collapseMode one of {@link #COLLAPSE_MODE_OFF}, {@link #COLLAPSE_MODE_PIN}
@@ -524,14 +520,13 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         }
 
         /**
-         * Returns the requested collapse mode.
+         * Returns the parallax scroll multiplier used in conjunction with
+         * {@link #COLLAPSE_MODE_PARALLAX}.
          *
-         * @return the current mode. One of {@link #COLLAPSE_MODE_OFF}, {@link #COLLAPSE_MODE_PIN}
-         * or {@link #COLLAPSE_MODE_PARALLAX}.
+         * @see #setParallaxMultiplier(float)
          */
-        @CollapseMode
-        public int getCollapseMode() {
-            return mCollapseMode;
+        public float getParallaxMultiplier() {
+            return mParallaxMult;
         }
 
         /**
@@ -547,25 +542,18 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         }
 
         /**
-         * Returns the parallax scroll multiplier used in conjunction with
-         * {@link #COLLAPSE_MODE_PARALLAX}.
-         *
-         * @see #setParallaxMultiplier(float)
+         * @hide
          */
-        public float getParallaxMultiplier() {
-            return mParallaxMult;
+        @RestrictTo(LIBRARY_GROUP)
+        @IntDef({
+                COLLAPSE_MODE_OFF,
+                COLLAPSE_MODE_PIN,
+                COLLAPSE_MODE_PARALLAX
+        })
+        @Retention(RetentionPolicy.SOURCE)
+        @interface CollapseMode {
         }
     }
-
-    final int getMaxOffsetForPinChild(View child) {
-        final ViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
-        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        return getWidth()
-                - offsetHelper.getLayoutLeft()
-                - child.getWidth()
-                - lp.rightMargin;
-    }
-
 
     private class OffsetUpdateListener implements HorizontalAppBarLayout.OnOffsetChangedListener {
         OffsetUpdateListener() {

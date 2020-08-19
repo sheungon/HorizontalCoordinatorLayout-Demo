@@ -1,9 +1,10 @@
 package com.agehua.horizontalcoordinatordemo.test;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout;
 import com.agehua.horizontalcoordinatordemo.R;

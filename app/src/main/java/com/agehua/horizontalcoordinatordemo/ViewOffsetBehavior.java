@@ -30,7 +30,8 @@ class ViewOffsetBehavior<V extends View> extends HorizontalCoordinatorLayout.Beh
     private int mTempTopBottomOffset = 0;
     private int mTempLeftRightOffset = 0;
 
-    public ViewOffsetBehavior() {}
+    public ViewOffsetBehavior() {
+    }
 
     public ViewOffsetBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
