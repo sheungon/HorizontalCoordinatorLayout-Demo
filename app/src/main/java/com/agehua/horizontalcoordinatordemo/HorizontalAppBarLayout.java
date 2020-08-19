@@ -84,13 +84,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         a.recycle();
 
         ViewCompat.setOnApplyWindowInsetsListener(this,
-                new androidx.core.view.OnApplyWindowInsetsListener() {
-                    @Override
-                    public WindowInsetsCompat onApplyWindowInsets(View v,
-                                                                  WindowInsetsCompat insets) {
-                        return onWindowInsetChanged(insets);
-                    }
-                });
+                (v, insets) -> onWindowInsetChanged(insets));
     }
 
     /**
@@ -720,7 +714,10 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return (flags & check) == check;
         }
 
-        private static View getAppBarChildOnOffset(final HorizontalAppBarLayout layout, final int offset) {
+        private static View getAppBarChildOnOffset(
+                @NonNull final HorizontalAppBarLayout layout,
+                final int offset
+        ) {
             final int absOffset = Math.abs(offset);
             for (int i = 0, z = layout.getChildCount(); i < z; i++) {
                 final View child = layout.getChildAt(i);
@@ -740,8 +737,13 @@ public class HorizontalAppBarLayout extends LinearLayout {
          * AppBarLayout.Behavior.onNestedPreScroll()
          */
         @Override
-        public boolean onStartNestedScroll(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout child,
-                                           View directTargetChild, View target, int nestedScrollAxes, int type) {
+        public boolean onStartNestedScroll(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull HorizontalAppBarLayout child,
+                @NonNull View directTargetChild,
+                @NonNull View target,
+                int nestedScrollAxes,
+                int type) {
             // Return true if we're nested scrolling vertically, and we have scrollable children
             // and the scrolling view is big enough to scroll
             final boolean started = (nestedScrollAxes & ViewCompat.SCROLL_AXIS_HORIZONTAL) != 0
@@ -760,8 +762,13 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        public void onNestedPreScroll(HorizontalCoordinatorLayout horizontalCoordinatorLayout, HorizontalAppBarLayout child,
-                                      View target, int dx, int dy, int[] consumed, int type) {
+        public void onNestedPreScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull HorizontalAppBarLayout child,
+                @NonNull View target,
+                int dx,
+                int dy,
+                @NonNull int[] consumed, int type) {
             if (dx != 0) {
                 int min, max;
                 if (dx < 0) {
@@ -780,9 +787,15 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        public void onNestedScroll(HorizontalCoordinatorLayout horizontalCoordinatorLayout, HorizontalAppBarLayout child,
-                                   View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed,
-                                   int type) {
+        public void onNestedScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull HorizontalAppBarLayout child,
+                @NonNull View target,
+                int dxConsumed,
+                int dyConsumed,
+                int dxUnconsumed,
+                int dyUnconsumed,
+                int type) {
             if (dxUnconsumed < 0) {
                 // If the scrolling view is scrolling down but not consuming, it's probably be at
                 // the top of it's content
@@ -792,8 +805,11 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        public void onStopNestedScroll(HorizontalCoordinatorLayout horizontalCoordinatorLayout, HorizontalAppBarLayout abl,
-                                       View target, int type) {
+        public void onStopNestedScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull HorizontalAppBarLayout abl,
+                @NonNull View target,
+                int type) {
             if (type == ViewCompat.TYPE_TOUCH) {
                 // If we haven't been flung then let's see if the current view has been set to snap
                 snapToChildIfNeeded(horizontalCoordinatorLayout, abl);
@@ -812,8 +828,11 @@ public class HorizontalAppBarLayout extends LinearLayout {
             mOnDragCallback = callback;
         }
 
-        private void animateOffsetTo(final HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                                     final HorizontalAppBarLayout child, final int offset, float velocity) {
+        private void animateOffsetTo(
+                @NonNull final HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull final HorizontalAppBarLayout child,
+                final int offset,
+                float velocity) {
             final int distance = Math.abs(getLeftRightOffsetForScrollingSibling() - offset);
 
             final int duration;
@@ -911,9 +930,14 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        public boolean onMeasureChild(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout child,
-                                      int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec,
-                                      int WidthUsed) {
+        public boolean onMeasureChild(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull HorizontalAppBarLayout child,
+                int parentWidthMeasureSpec,
+                int widthUsed,
+                int parentHeightMeasureSpec,
+                int heightUsed
+        ) {
             final HorizontalCoordinatorLayout.LayoutParams lp =
                     (HorizontalCoordinatorLayout.LayoutParams) child.getLayoutParams();
             if (lp.width == HorizontalCoordinatorLayout.LayoutParams.WRAP_CONTENT) {
@@ -922,18 +946,20 @@ public class HorizontalAppBarLayout extends LinearLayout {
                 // what we actually want, so we measure it ourselves with an unspecified spec to
                 // allow the child to be larger than it's parent
                 parent.onMeasureChild(child, parentWidthMeasureSpec, widthUsed,
-                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), WidthUsed);
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), heightUsed);
                 return true;
             }
 
             // Let the parent handle it as normal
             return super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed,
-                    parentHeightMeasureSpec, WidthUsed);
+                    parentHeightMeasureSpec, heightUsed);
         }
 
         @Override
-        public boolean onLayoutChild(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout abl,
-                                     int layoutDirection) {
+        public boolean onLayoutChild(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull HorizontalAppBarLayout abl,
+                int layoutDirection) {
             boolean handled = super.onLayoutChild(parent, abl, layoutDirection);
 
             // The priority for for actions here is (first which is true wins):
@@ -989,7 +1015,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        boolean canDragView(HorizontalAppBarLayout view) {
+        public boolean canDragView(@NonNull HorizontalAppBarLayout view) {
             if (mOnDragCallback != null) {
                 // If there is a drag callback set, it's in control
                 return mOnDragCallback.canDrag(view);
@@ -1008,24 +1034,32 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        void onFlingFinished(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout layout) {
+        public void onFlingFinished(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull HorizontalAppBarLayout layout
+        ) {
             // At the end of a manual fling, check to see if we need to snap to the edge-child
             snapToChildIfNeeded(parent, layout);
         }
 
         @Override
-        int getMaxDragOffset(HorizontalAppBarLayout view) {
+        public int getMaxDragOffset(HorizontalAppBarLayout view) {
             return -view.getDownNestedScrollRange();
         }
 
         @Override
-        int getScrollRangeForDragFling(HorizontalAppBarLayout view) {
+        public int getScrollRangeForDragFling(HorizontalAppBarLayout view) {
             return view.getTotalScrollRange();
         }
 
         @Override
-        int setHeaderLeftRightOffset(HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                                     HorizontalAppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
+        public int setHeaderLeftRightOffset(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull HorizontalAppBarLayout appBarLayout,
+                int newOffset,
+                int minOffset,
+                int maxOffset
+        ) {
             final int curOffset = getLeftRightOffsetForScrollingSibling();
             int consumed = 0;
             // minOffset equals to AppBarLayout minus right，maxOffset equals to 0
@@ -1078,7 +1112,10 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return mOffsetAnimator != null && mOffsetAnimator.isRunning();
         }
 
-        private int interpolateOffset(HorizontalAppBarLayout layout, final int offset) {
+        private int interpolateOffset(
+                @NonNull HorizontalAppBarLayout layout,
+                final int offset
+        ) {
             final int absOffset = Math.abs(offset);
 
             for (int i = 0, z = layout.getChildCount(); i < z; i++) {
@@ -1125,9 +1162,13 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return offset;
         }
 
-        private void updateAppBarLayoutDrawableState(final HorizontalCoordinatorLayout parent,
-                                                     final HorizontalAppBarLayout layout, final int offset, final int direction,
-                                                     final boolean forceJump) {
+        private void updateAppBarLayoutDrawableState(
+                @NonNull final HorizontalCoordinatorLayout parent,
+                @NonNull final HorizontalAppBarLayout layout,
+                final int offset,
+                final int direction,
+                final boolean forceJump
+        ) {
             final View child = getAppBarChildOnOffset(layout, offset);
             if (child != null) {
                 final HorizontalAppBarLayout.LayoutParams childLp = (HorizontalAppBarLayout.LayoutParams) child.getLayoutParams();
@@ -1151,8 +1192,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
 
                 final boolean changed = layout.setCollapsedState(collapsed);
 
-                if (Build.VERSION.SDK_INT >= 11 && (forceJump
-                        || (changed && shouldJumpElevationState(parent, layout)))) {
+                if (forceJump || changed && shouldJumpElevationState(parent, layout)) {
                     // If the collapsed state changed, we may need to
                     // jump to the current state if we have an overlapping view
                     layout.jumpDrawablesToCurrentState();
@@ -1178,12 +1218,15 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        int getLeftRightOffsetForScrollingSibling() {
+        public int getLeftRightOffsetForScrollingSibling() {
             return getLeftAndRightOffset() + mOffsetDelta;
         }
 
         @Override
-        public Parcelable onSaveInstanceState(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout abl) {
+        public Parcelable onSaveInstanceState(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull HorizontalAppBarLayout abl
+        ) {
             final Parcelable superState = super.onSaveInstanceState(parent, abl);
             final int offset = getLeftAndRightOffset();
 

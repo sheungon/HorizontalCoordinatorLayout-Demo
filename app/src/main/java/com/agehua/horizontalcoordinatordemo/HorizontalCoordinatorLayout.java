@@ -48,7 +48,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.coordinatorlayout.widget.DirectedAcyclicGraph;
 import androidx.coordinatorlayout.widget.ViewGroupUtils;
@@ -77,11 +76,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
-
 
 public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScrollingParent2 {
-    static final String TAG = "CoordinatorLayout";
+    static final String TAG = "HorizontalCoordinatorLayout";
     static final String WIDGET_PACKAGE_NAME;
     static final Class<?>[] CONSTRUCTOR_PARAMS = new Class<?>[]{
             Context.class,
@@ -134,6 +131,7 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
     public HorizontalCoordinatorLayout(Context context) {
         this(context, null);
     }
+
     public HorizontalCoordinatorLayout(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.coordinatorLayoutStyle);
     }
@@ -389,7 +387,6 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
     /**
      * @hide
      */
-    @RestrictTo(LIBRARY_GROUP)
     public final WindowInsetsCompat getLastWindowInsets() {
         return mLastInsets;
     }
@@ -1977,7 +1974,6 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
     /**
      * @hide
      */
-    @RestrictTo(LIBRARY_GROUP)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({EVENT_PRE_DRAW, EVENT_NESTED_SCROLL, EVENT_VIEW_REMOVED})
     public @interface DispatchChangeEvent {
@@ -2279,7 +2275,11 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @param child      the child view to manipulate
          * @param dependency the dependent view that has been removed
          */
-        public void onDependentViewRemoved(HorizontalCoordinatorLayout parent, V child, View dependency) {
+        public void onDependentViewRemoved(
+                HorizontalCoordinatorLayout parent,
+                V child,
+                View dependency
+        ) {
         }
 
         // Utility methods for accessing child-specific, behavior-modifiable properties.
@@ -2304,9 +2304,14 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @return true if the Behavior measured the child view, false if the CoordinatorLayout
          * should perform its default measurement
          */
-        public boolean onMeasureChild(HorizontalCoordinatorLayout parent, V child,
-                                      int parentWidthMeasureSpec, int widthUsed,
-                                      int parentHeightMeasureSpec, int heightUsed) {
+        public boolean onMeasureChild(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull V child,
+                int parentWidthMeasureSpec,
+                int widthUsed,
+                int parentHeightMeasureSpec,
+                int heightUsed
+        ) {
             return false;
         }
 
@@ -2501,9 +2506,16 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @param type                        the type of input which cause this scroll event
          * @see NestedScrollingParent2#onNestedScroll(View, int, int, int, int, int)
          */
-        public void onNestedScroll(@NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout, @NonNull V child,
-                                   @NonNull View target, int dxConsumed, int dyConsumed,
-                                   int dxUnconsumed, int dyUnconsumed, @NestedScrollType int type) {
+        public void onNestedScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull V child,
+                @NonNull View target,
+                int dxConsumed,
+                int dyConsumed,
+                int dxUnconsumed,
+                int dyUnconsumed,
+                @NestedScrollType int type
+        ) {
             if (type == ViewCompat.TYPE_TOUCH) {
                 onNestedScroll(horizontalCoordinatorLayout, child, target, dxConsumed, dyConsumed,
                         dxUnconsumed, dyUnconsumed);
@@ -2517,8 +2529,14 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * {@link ViewCompat#TYPE_TOUCH}.
          */
         @Deprecated
-        public void onNestedPreScroll(@NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                                      @NonNull V child, @NonNull View target, int dx, int dy, @NonNull int[] consumed) {
+        public void onNestedPreScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull V child,
+                @NonNull View target,
+                int dx,
+                int dy,
+                @NonNull int[] consumed
+        ) {
             // Do nothing
         }
 
@@ -2550,9 +2568,14 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @param type                        the type of input which cause this scroll event
          * @see NestedScrollingParent2#onNestedPreScroll(View, int, int, int[], int)
          */
-        public void onNestedPreScroll(@NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
-                                      @NonNull V child, @NonNull View target, int dx, int dy, @NonNull int[] consumed,
-                                      @NestedScrollType int type) {
+        public void onNestedPreScroll(
+                @NonNull HorizontalCoordinatorLayout horizontalCoordinatorLayout,
+                @NonNull V child,
+                @NonNull View target,
+                int dx,
+                int dy,
+                @NonNull int[] consumed,
+                @NestedScrollType int type) {
             if (type == ViewCompat.TYPE_TOUCH) {
                 onNestedPreScroll(horizontalCoordinatorLayout, child, target, dx, dy, consumed);
             }
@@ -2689,7 +2712,10 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @see #onRestoreInstanceState(Parcelable)
          * @see View#onSaveInstanceState()
          */
-        public Parcelable onSaveInstanceState(HorizontalCoordinatorLayout parent, V child) {
+        public Parcelable onSaveInstanceState(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull V child
+        ) {
             return BaseSavedState.EMPTY_STATE;
         }
 

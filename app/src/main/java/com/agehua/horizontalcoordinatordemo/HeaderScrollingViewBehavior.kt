@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.NonNull
 import androidx.core.math.MathUtils
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -51,11 +52,14 @@ internal abstract class HeaderScrollingViewBehavior :
         attrs
     )
 
-    abstract fun findFirstDependency(views: List<View>): View?
+    abstract fun findFirstDependency(@NonNull views: List<View>): View?
 
     override fun onMeasureChild(
-        parent: HorizontalCoordinatorLayout, child: View,
-        parentWidthMeasureSpec: Int, widthUsed: Int, parentHeightMeasureSpec: Int,
+        parent: HorizontalCoordinatorLayout,
+        child: View,
+        parentWidthMeasureSpec: Int,
+        widthUsed: Int,
+        parentHeightMeasureSpec: Int,
         heightUsed: Int
     ): Boolean {
         val childLpHeight = child.layoutParams.height
