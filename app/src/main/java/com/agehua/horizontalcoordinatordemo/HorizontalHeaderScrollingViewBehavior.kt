@@ -28,7 +28,7 @@ import androidx.core.view.ViewCompat
 /**
  *
  */
-internal abstract class HorizontalHeaderScrollingViewBehavior :
+abstract class HorizontalHeaderScrollingViewBehavior :
     ViewOffsetBehavior<View> {
 
     val tempRect1 = Rect()

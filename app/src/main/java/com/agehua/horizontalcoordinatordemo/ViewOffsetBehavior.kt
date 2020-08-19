@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Behavior will automatically sets up a [ViewOffsetHelper] on a [View].
  */
-internal open class ViewOffsetBehavior<V : View> :
+open class ViewOffsetBehavior<V : View> :
     HorizontalCoordinatorLayout.Behavior<V> {
     private var viewOffsetHelper: ViewOffsetHelper? = null
     private val tempTopBottomOffset = AtomicInteger(0)

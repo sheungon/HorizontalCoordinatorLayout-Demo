@@ -30,8 +30,8 @@ import androidx.core.view.ViewCompat
  * Support horizontal touch scrolling.
  * For View on touch moving event and fling events.
  */
-internal abstract class HorizontalHeaderBehavior<V : View> :
-    ViewOffsetBehavior<V> {
+abstract class HorizontalHeaderBehavior<V : View>
+    : ViewOffsetBehavior<V> {
 
     var mScroller: OverScroller? = null
     private var mFlingRunnable: Runnable? = null
