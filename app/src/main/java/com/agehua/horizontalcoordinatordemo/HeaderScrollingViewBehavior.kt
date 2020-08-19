@@ -116,7 +116,7 @@ internal abstract class HeaderScrollingViewBehavior :
             val lp =
                 child.layoutParams as HorizontalCoordinatorLayout.LayoutParams
             val available = mTempRect1
-            if (layoutDirection == 0) { // 水平
+            if (layoutDirection == 0) { // horizontal
                 available[header.right + lp.leftMargin, parent.top + lp.topMargin, parent.width - parent.paddingRight - lp.rightMargin] =
                     parent.height + header.bottom - parent.paddingBottom - lp.bottomMargin
             } else {
