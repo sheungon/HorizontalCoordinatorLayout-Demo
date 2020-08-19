@@ -29,8 +29,8 @@ import androidx.core.view.ViewCompat;
 
 /**
  * See {@link HeaderScrollingViewBehavior}.
- * 水平方向支持触摸滑动
- * 该类主要用于View处理触摸事件以及触摸后的fling事件
+ * Support horizontal touch scrolling.
+ * For View on touch moving event and fling events.
  */
 abstract class HorizontalHeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
 

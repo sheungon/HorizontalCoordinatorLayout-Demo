@@ -137,8 +137,9 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
             ((HorizontalAppBarLayout) parent).addOnOffsetChangedListener(mOnOffsetChangedListener);
 
             // We're attached, so lets request an inset dispatch
-            // 状态栏只有一个，只能被一个View消耗掉，当调用requestApplyInsets 就会重新分配一次WindowInsets，
-            // OnApplyWindowInsetsListener就会被回调
+            // There is only one state, and can be consumed by one View.
+            // When requestApplyInsets, it will return a WindowInsets.
+            // And OnApplyWindowInsetsListener will be invoked.
             ViewCompat.requestApplyInsets(this);
         }
     }
@@ -462,6 +463,7 @@ public class HorizontalCollapsingToolbarLayout extends FrameLayout {
         private static final float DEFAULT_PARALLAX_MULTIPLIER = 0.5f;
         int mCollapseMode = COLLAPSE_MODE_OFF;
         float mParallaxMult = DEFAULT_PARALLAX_MULTIPLIER;
+
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
 

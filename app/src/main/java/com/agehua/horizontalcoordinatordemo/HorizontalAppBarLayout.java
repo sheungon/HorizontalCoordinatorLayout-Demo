@@ -569,9 +569,11 @@ public class HorizontalAppBarLayout extends LinearLayout {
         public LayoutParams(int width, int height) {
             super(width, height);
         }
+
         public LayoutParams(int width, int height, float weight) {
             super(width, height, weight);
         }
+
         public LayoutParams(ViewGroup.LayoutParams p) {
             super(p);
         }
@@ -579,6 +581,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
+
         @RequiresApi(19)
         public LayoutParams(LinearLayout.LayoutParams source) {
             // The copy constructor called here only exists on API 19+.
@@ -598,7 +601,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return mCollapseMode;
         }
 
-        ///////////////// 添加collapseMode支持 /////////////////
+        ///////////////// Added collapseMode support /////////////////
         public void setCollapseMode(@LayoutParams.CollapseMode int collapseMode) {
             mCollapseMode = collapseMode;
         }
@@ -705,6 +708,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         private float mOffsetToChildIndexOnLayoutPerc;
         private WeakReference<View> mLastNestedScrollingChildRef;
         private HorizontalAppBarLayout.Behavior.DragCallback mOnDragCallback;
+
         public Behavior() {
         }
 
@@ -728,10 +732,12 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         /**
-         * NestedScrollView作为子View滑动时候会首先调用startNestedScroll(...)方法来询问父View即CoordinatorLayout是否需要消费事件，
-         * CoordinatorLayout作为代理做发给对应Behavior，这里就分发给了AppBarLayout.Behavior
+         * NestedScrollView as child of View, startNestedScroll(...) will be invoked on scrolling,
+         * that View parent, CoordinatorLayout, to check if the event has been consumed.
+         * CoordinatorLayout as proxy callback to Behavior, here is AppBarLayout.Behavior
          *
-         * @return true 说明CoordinatorLayout需要进行消费事件的处理，然后回调AppBarLayout.Behavior.onNestedPreScroll()
+         * @return true means CoordinatorLayout need to consume the event and should invoke
+         * AppBarLayout.Behavior.onNestedPreScroll()
          */
         @Override
         public boolean onStartNestedScroll(HorizontalCoordinatorLayout parent, HorizontalAppBarLayout child,
@@ -1022,7 +1028,8 @@ public class HorizontalAppBarLayout extends LinearLayout {
                                      HorizontalAppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
             final int curOffset = getLeftRightOffsetForScrollingSibling();
             int consumed = 0;
-            // minOffset等于AppBarLayout的负的right，maxOffset等于0。//AppBarLayout滑动的距离如果超出了minOffset或者maxOffset，则直接返回0
+            // minOffset equals to AppBarLayout minus right，maxOffset equals to 0
+            // If AppBarLayout scroll distance larger than minOffset or maxOffset, return 0
             if (minOffset != 0 && curOffset >= minOffset && curOffset <= maxOffset) {
                 // If we have some scrolling range, and we're currently within the min and max
                 // offsets, calculate a new offset //矫正newOffset，使其minOffset<=newOffset<=maxOffset
@@ -1031,13 +1038,15 @@ public class HorizontalAppBarLayout extends LinearLayout {
                     final int interpolatedOffset = appBarLayout.hasChildWithInterpolator()
                             ? interpolateOffset(appBarLayout, newOffset)
                             : newOffset; //由于默认没设置Interpolator，所以interpolatedOffset=newOffset;
-                    //调用ViewOffsetBehvaior的方法setTopAndBottomOffset(...)，最终通过
-                    // ViewCompat.offsetTopAndBottom()移动AppBarLayout
+                    // Invoke ViewOffsetBehvaior.setTopAndBottomOffset(...).
+                    // ViewCompat.offsetTopAndBottom() moves AppBarLayout
                     final boolean offsetChanged = setLeftAndRightOffset(interpolatedOffset);
 
-                    // Update how much dy we have consumed //记录下消费了多少的dy。
+                    // Update how much dy we have consumed
+                    // Record consumed dy
                     consumed = curOffset - newOffset;
-                    // Update the stored sibling offset //没设置Interpolator的情况， mOffsetDelta永远=0
+                    // Update the stored sibling offset
+                    // Set Interpolator, mOffsetDelta keeps = 0
                     mOffsetDelta = newOffset - interpolatedOffset;
 
                     if (!offsetChanged && appBarLayout.hasChildWithInterpolator()) {
@@ -1048,7 +1057,8 @@ public class HorizontalAppBarLayout extends LinearLayout {
                         horizontalCoordinatorLayout.dispatchDependentViewsChanged(appBarLayout);
                     }
 
-                    // Dispatch the updates to any listeners //分发回调OnOffsetChangedListener.onOffsetChanged(...)
+                    // Dispatch the updates to any listeners
+                    // Callback OnOffsetChangedListener.onOffsetChanged(...)
                     appBarLayout.dispatchOffsetUpdates(getLeftAndRightOffset());
 
                     // Update the AppBarLayout's drawable state (for any elevation changes)

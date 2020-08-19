@@ -111,7 +111,7 @@ abstract class HorizontalHeaderScrollingViewBehavior extends ViewOffsetBehavior<
             final HorizontalCoordinatorLayout.LayoutParams lp =
                     (HorizontalCoordinatorLayout.LayoutParams) child.getLayoutParams();
             final Rect available = mTempRect1;
-            if (layoutDirection == 0) {// 水平
+            if (layoutDirection == 0) {// Horizontal
                 available.set(header.getRight() + lp.leftMargin,
                         parent.getTop() + lp.topMargin,
                         parent.getWidth() - parent.getPaddingRight() - lp.rightMargin,
