@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * Also the setting of absolute offsets (similar to translationX/Y), rather than additive
  * offsets.
  */
-internal class ViewOffsetHelper(private val view: View) {
+class ViewOffsetHelper(private val view: View) {
 
     private val layoutTop = AtomicInteger(0)
     private val layoutLeft = AtomicInteger(0)

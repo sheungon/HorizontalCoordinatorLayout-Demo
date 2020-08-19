@@ -457,7 +457,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
     interface OnOffsetChangedListener {
         fun onOffsetChanged(
-            appBarLayout: HorizontalAppBarLayout?,
+            layout: HorizontalAppBarLayout,
             verticalOffset: Int
         )
     }
