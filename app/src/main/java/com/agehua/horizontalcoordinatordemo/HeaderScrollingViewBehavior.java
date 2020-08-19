@@ -23,6 +23,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -102,8 +103,11 @@ abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
     }
 
     @Override
-    protected void layoutChild(final HorizontalCoordinatorLayout parent, final View child,
-                               final int layoutDirection) {
+    protected void layoutChild(
+            @NonNull final HorizontalCoordinatorLayout parent,
+            @NonNull final View child,
+            final int layoutDirection
+    ) {
         final List<View> dependencies = parent.getDependencies(child);
         final View header = findFirstDependency(dependencies);
 

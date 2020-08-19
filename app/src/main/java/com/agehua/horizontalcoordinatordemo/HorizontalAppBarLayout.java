@@ -1290,7 +1290,10 @@ public class HorizontalAppBarLayout extends LinearLayout {
         public ScrollingViewBehavior() {
         }
 
-        public ScrollingViewBehavior(Context context, AttributeSet attrs) {
+        public ScrollingViewBehavior(
+                @NonNull Context context,
+                @Nullable AttributeSet attrs
+        ) {
             super(context, attrs);
 
             final TypedArray a = context.obtainStyledAttributes(attrs,
@@ -1316,8 +1319,11 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        public boolean onDependentViewChanged(HorizontalCoordinatorLayout parent, View child,
-                                              View dependency) {
+        public boolean onDependentViewChanged(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull View child,
+                @NonNull View dependency
+        ) {
             offsetChildAsNeeded(parent, child, dependency);
             return false;
         }
@@ -1330,7 +1336,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
                 // Offset the rect by the child's left/top
                 rectangle.offset(child.getLeft(), child.getTop());
 
-                final Rect parentRect = mTempRect1;
+                final Rect parentRect = getTempRect1();
                 parentRect.set(0, 0, parent.getWidth(), parent.getHeight());
 
                 if (!parentRect.contains(rectangle)) {
@@ -1343,8 +1349,12 @@ public class HorizontalAppBarLayout extends LinearLayout {
             return false;
         }
 
-        private void offsetChildAsNeeded(HorizontalCoordinatorLayout parent, View child, View dependency) {
-            final HorizontalCoordinatorLayout.Behavior behavior =
+        private void offsetChildAsNeeded(
+                @NonNull HorizontalCoordinatorLayout parent,
+                @NonNull View child,
+                @NonNull View dependency
+        ) {
+            final HorizontalCoordinatorLayout.Behavior<?> behavior =
                     ((HorizontalCoordinatorLayout.LayoutParams) dependency.getLayoutParams()).getBehavior();
             if (behavior instanceof HorizontalAppBarLayout.Behavior) {
                 // Offset the child, pinning it to the bottom the header-dependency, maintaining
@@ -1359,7 +1369,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        float getOverlapRatioForOffset(final View header) {
+        public float getOverlapRatioForOffset(@NonNull final View header) {
             if (header instanceof HorizontalAppBarLayout) {
                 final HorizontalAppBarLayout abl = (HorizontalAppBarLayout) header;
                 final int totalScrollRange = abl.getTotalScrollRange();
@@ -1381,7 +1391,7 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        HorizontalAppBarLayout findFirstDependency(List<View> views) {
+        public HorizontalAppBarLayout findFirstDependency(List<? extends View> views) {
             for (int i = 0, z = views.size(); i < z; i++) {
                 View view = views.get(i);
                 if (view instanceof HorizontalAppBarLayout) {
@@ -1392,11 +1402,11 @@ public class HorizontalAppBarLayout extends LinearLayout {
         }
 
         @Override
-        int getScrollRange(View v) {
-            if (v instanceof HorizontalAppBarLayout) {
-                return ((HorizontalAppBarLayout) v).getTotalScrollRange();
+        public int getScrollRange(@NonNull View view) {
+            if (view instanceof HorizontalAppBarLayout) {
+                return ((HorizontalAppBarLayout) view).getTotalScrollRange();
             } else {
-                return super.getScrollRange(v);
+                return super.getScrollRange(view);
             }
         }
     }
