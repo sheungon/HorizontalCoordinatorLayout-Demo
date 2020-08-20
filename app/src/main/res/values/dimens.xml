@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="image_width">135dp</dimen>
+    <dimen name="image_height">170dp</dimen>
+    <dimen name="sticky_image_width">145dp</dimen>
+    <dimen name="sticky_image_height">180dp</dimen>
+
+</resources>

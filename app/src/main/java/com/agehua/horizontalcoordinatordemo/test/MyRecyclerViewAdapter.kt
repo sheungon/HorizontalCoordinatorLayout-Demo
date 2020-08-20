@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.agehua.horizontalcoordinatordemo.R
@@ -13,9 +14,9 @@ import java.util.*
 class MyRecyclerViewAdapter(recyclerView: RecyclerView) : RecyclerView.Adapter<RecyclerHolder>() {
 
     private val mContext: Context = recyclerView.context
-    private val dataList: MutableList<String> = ArrayList()
+    private val dataList: MutableList<TestData> = ArrayList()
 
-    fun setData(dataList: List<String>?) {
+    fun setData(dataList: List<TestData>?) {
         if (null != dataList) {
             this.dataList.clear()
             this.dataList.addAll(dataList)
@@ -29,7 +30,13 @@ class MyRecyclerViewAdapter(recyclerView: RecyclerView) : RecyclerView.Adapter<R
     }
 
     override fun onBindViewHolder(holder: RecyclerHolder, position: Int) {
-        holder.textView.text = dataList[position]
+        val data = dataList.getOrNull(position)
+        holder.textView.text = data?.text
+        data?.imgRes?.let {
+            holder.imageView.setImageResource(it)
+        } ?: run {
+            holder.imageView.setImageDrawable(null)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -38,11 +45,8 @@ class MyRecyclerViewAdapter(recyclerView: RecyclerView) : RecyclerView.Adapter<R
 
     class RecyclerHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var textView: TextView
-
-        init {
-            textView = itemView.findViewById<View>(android.R.id.text1) as TextView
-        }
+        val textView: TextView = itemView.findViewById(android.R.id.text1)
+        val imageView: ImageView = itemView.findViewById(R.id.image)
     }
 
 }
