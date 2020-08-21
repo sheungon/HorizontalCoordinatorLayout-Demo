@@ -128,15 +128,19 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
     private Drawable mStatusBarBackground;
     private androidx.core.view.OnApplyWindowInsetsListener mApplyWindowInsetsListener;
 
-    public HorizontalCoordinatorLayout(Context context) {
+    public HorizontalCoordinatorLayout(@NonNull Context context) {
         this(context, null);
     }
 
-    public HorizontalCoordinatorLayout(Context context, AttributeSet attrs) {
+    public HorizontalCoordinatorLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, R.attr.coordinatorLayoutStyle);
     }
 
-    public HorizontalCoordinatorLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public HorizontalCoordinatorLayout(
+            @NonNull Context context,
+            @Nullable AttributeSet attrs,
+            int defStyleAttr
+    ) {
         super(context, attrs, defStyleAttr);
 
         final TypedArray a = (defStyleAttr == 0)
@@ -2090,7 +2094,7 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          *
          * @param params the LayoutParams instance that this Behavior has been attached to
          */
-        public void onAttachedToLayoutParams(@NonNull HorizontalCoordinatorLayout.LayoutParams params) {
+        public void onAttachedToLayoutParams(@NonNull LayoutParams params) {
         }
 
         /**
@@ -3143,8 +3147,8 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
     }
 
     protected static class SavedState extends AbsSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.ClassLoaderCreator<SavedState>() {
+        public static final Creator<SavedState> CREATOR =
+                new ClassLoaderCreator<SavedState>() {
                     @Override
                     public SavedState createFromParcel(Parcel in, ClassLoader loader) {
                         return new SavedState(in, loader);
