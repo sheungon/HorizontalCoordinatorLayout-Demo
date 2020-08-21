@@ -269,7 +269,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
     // If we've hit an non-quick return scrollable view, and we've already hit a
     // quick return view, return now
-    // Else use the full Width (minus the top inset)// Only enter by the amount of the collapsed height// If they're set to enter collapsed, use the minimum height// First take the margin into account
+    // Else use the full Width (minus the left inset)// Only enter by the amount of the collapsed height// If they're set to enter collapsed, use the minimum height// First take the margin into account
     // The view has the quick return flag combination...
     // If we already have a valid value, return it
 
@@ -300,7 +300,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                         // Only enter by the amount of the collapsed height
                         childWidth - ViewCompat.getMinimumWidth(child)
                     } else {
-                        // Else use the full Width (minus the top inset)
+                        // Else use the full Width (minus the left inset)
                         childWidth - leftInset
                     }
                 } else if (range > 0) {
@@ -377,11 +377,11 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         // If we reach here then we don't have a min height explicitly set. Instead we'll take a
         // guess at 1/3 of our Width being visible
         get() {
-            val topInset = leftInset
+            val leftInset = this.leftInset
             val minWidth = ViewCompat.getMinimumWidth(this)
             if (minWidth != 0) {
                 // If this layout has a min Width, use it (doubled)
-                return minWidth * 2 + topInset
+                return minWidth * 2 + leftInset
             }
 
             // Otherwise, we'll use twice the min Width of our last child
@@ -389,7 +389,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             val lastChildMinWidth =
                 if (childCount >= 1) ViewCompat.getMinimumWidth(getChildAt(childCount - 1)) else 0
             return if (lastChildMinWidth != 0) {
-                lastChildMinWidth * 2 + topInset
+                lastChildMinWidth * 2 + leftInset
             } else width / 3
 
             // If we reach here then we don't have a min height explicitly set. Instead we'll take a
@@ -623,8 +623,8 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
             /**
              * Upon a scroll ending, if the view is only partially visible then it will be snapped
-             * and scrolled to it's closest edge. For example, if the view only has it's bottom 25%
-             * displayed, it will be scrolled off screen completely. Conversely, if it's bottom 75%
+             * and scrolled to it's closest edge. For example, if the view only has it's right 25%
+             * displayed, it will be scrolled off screen completely. Conversely, if it's right 75%
              * is visible then it will be scrolled fully into view.
              */
             const val SCROLL_FLAG_SNAP = 0x10
@@ -745,7 +745,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         ) {
             if (dxUnconsumed < 0) {
                 // If the scrolling view is scrolling down but not consuming, it's probably be at
-                // the top of it's content
+                // the left of it's content
                 scroll(
                     horizontalCoordinatorLayout, child, dxUnconsumed,
                     -child.downNestedScrollRange, 0
@@ -845,7 +845,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             val count = abl.childCount
             while (i < count) {
                 val child = abl.getChildAt(i)
-                if (child.top <= -offset && child.bottom >= -offset) {
+                if (child.left <= -offset && child.right >= -offset) {
                     return i
                 }
                 i++
@@ -866,11 +866,11 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 val flags = lp.scrollFlags
                 if (flags and LayoutParams.FLAG_SNAP == LayoutParams.FLAG_SNAP) {
                     // We're set the snap, so animate the offset to the nearest edge
-                    var snapTop = -offsetChild.top
-                    var snapBottom = -offsetChild.bottom
+                    var snapLeft = -offsetChild.left
+                    var snapRight = -offsetChild.right
                     if (offsetChildIndex == abl.childCount - 1) {
-                        // If this is the last child, we need to take the top inset into account
-                        snapBottom += abl.leftInset
+                        // If this is the last child, we need to take the left inset into account
+                        snapRight += abl.leftInset
                     }
                     if (checkFlag(
                             flags,
@@ -878,7 +878,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                         )
                     ) {
                         // If the view is set only exit until it is collapsed, we'll abide by that
-                        snapBottom += ViewCompat.getMinimumWidth(offsetChild)
+                        snapRight += ViewCompat.getMinimumWidth(offsetChild)
                     } else if (checkFlag(
                             flags,
                             LayoutParams.FLAG_QUICK_RETURN
@@ -887,15 +887,15 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                     ) {
                         // If it's set to always enter collapsed, it actually has two states. We
                         // select the state and then snap within the state
-                        val seam = snapBottom + ViewCompat.getMinimumWidth(offsetChild)
+                        val seam = snapRight + ViewCompat.getMinimumWidth(offsetChild)
                         if (offset < seam) {
-                            snapTop = seam
+                            snapLeft = seam
                         } else {
-                            snapBottom = seam
+                            snapRight = seam
                         }
                     }
                     val newOffset =
-                        if (offset < (snapBottom + snapTop) / 2) snapBottom else snapTop
+                        if (offset < (snapRight + snapLeft) / 2) snapRight else snapLeft
                     animateOffsetTo(
                         horizontalCoordinatorLayout, abl,
                         MathUtils.clamp(
@@ -951,7 +951,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             val pendingAction = abl.pendingAction
             if (mOffsetToChildIndexOnLayout >= 0 && pendingAction and PENDING_ACTION_FORCE == 0) {
                 val child = abl.getChildAt(mOffsetToChildIndexOnLayout)
-                var offset = -child.bottom
+                var offset = -child.right
                 offset += if (mOffsetToChildIndexOnLayoutIsMinWidth) {
                     ViewCompat.getMinimumWidth(child) + abl.leftInset
                 } else {
@@ -982,7 +982,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             mOffsetToChildIndexOnLayout =
                 INVALID_POSITION
 
-            // We may have changed size, so let's constrain the top and bottom offset correctly,
+            // We may have changed size, so let's constrain the left and right offset correctly,
             // just in case we're out of the bounds
             setLeftAndRightOffset(
                 MathUtils.clamp(
@@ -1051,9 +1051,8 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                         if (appBarLayout.hasChildWithInterpolator()) interpolateOffset(
                             appBarLayout,
                             newOffset
-                        ) else newOffset //由于默认没设置Interpolator，所以interpolatedOffset=newOffset;
-                    // Invoke ViewOffsetBehvaior.setTopAndBottomOffset(...).
-                    // ViewCompat.offsetTopAndBottom() moves AppBarLayout
+                        ) else newOffset
+                    // Because of default setting Interpolator, interpolatedOffset=newOffset;
                     val offsetChanged = setLeftAndRightOffset(interpolatedOffset)
 
                     // Update how much dy we have consumed
@@ -1103,14 +1102,14 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                     child.layoutParams as LayoutParams
                 val interpolator =
                     childLp.scrollInterpolator
-                if (absOffset >= child.top && absOffset <= child.bottom) {
+                if (absOffset >= child.left && absOffset <= child.right) {
                     if (interpolator != null) {
                         var childScrollableWidth = 0
                         val flags = childLp.scrollFlags
                         if (flags and LayoutParams.SCROLL_FLAG_SCROLL != 0) {
                             // We're set to scroll so add the child's Width plus margin
-                            childScrollableWidth += (child.width + childLp.topMargin
-                                    + childLp.bottomMargin)
+                            childScrollableWidth += (child.width + childLp.leftMargin
+                                    + childLp.rightMargin)
                             if (flags and LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED != 0) {
                                 // For a collapsing scroll, we to take the collapsed Width
                                 // into account.
@@ -1121,14 +1120,14 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                             childScrollableWidth -= layout.leftInset
                         }
                         if (childScrollableWidth > 0) {
-                            val offsetForView = absOffset - child.top
+                            val offsetForView = absOffset - child.left
                             val interpolatedDiff = Math.round(
                                 childScrollableWidth *
                                         interpolator.getInterpolation(
                                             offsetForView / childScrollableWidth.toFloat()
                                         )
                             )
-                            return Integer.signum(offset) * (child.top + interpolatedDiff)
+                            return Integer.signum(offset) * (child.left + interpolatedDiff)
                         }
                     }
 
@@ -1186,7 +1185,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             layout: HorizontalAppBarLayout
         ): Boolean {
             // We should jump the elevated state if we have a dependent scrolling view which has
-            // an overlapping top (i.e. overlaps us)
+            // an overlapping left (i.e. overlaps us)
             val dependencies =
                 parent.getDependents(layout)
             var i = 0
@@ -1220,17 +1219,17 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             val count = abl.childCount
             while (i < count) {
                 val child = abl.getChildAt(i)
-                val visBottom = child.bottom + offset
-                if (child.top + offset <= 0 && visBottom >= 0) {
+                val visRight = child.right + offset
+                if (child.left + offset <= 0 && visRight >= 0) {
                     val ss =
                         SavedState(
                             superState
                         )
                     ss.firstVisibleChildIndex = i
                     ss.firstVisibleChildAtMinimumWidth =
-                        visBottom == ViewCompat.getMinimumWidth(child) + abl.leftInset
+                        visRight == ViewCompat.getMinimumWidth(child) + abl.leftInset
                     ss.firstVisibleChildPercentageShown =
-                        visBottom / child.width.toFloat()
+                        visRight / child.width.toFloat()
                     return ss
                 }
                 i++
@@ -1335,7 +1334,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 val z = layout.childCount
                 while (i < z) {
                     val child = layout.getChildAt(i)
-                    if (absOffset >= child.top && absOffset <= child.bottom) {
+                    if (absOffset >= child.left && absOffset <= child.right) {
                         return child
                     }
                     i++
@@ -1410,7 +1409,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             val behavior =
                 (dependency.layoutParams as HorizontalCoordinatorLayout.LayoutParams).behavior
             if (behavior is Behavior) {
-                // Offset the child, pinning it to the bottom the header-dependency, maintaining
+                // Offset the child, pinning it to the right the header-dependency, maintaining
                 // any vertical gap and overlap
                 ViewCompat.offsetLeftAndRight(
                     child, (dependency.right - child.left

@@ -126,11 +126,11 @@ constructor(
 
         // Now draw the status bar scrim
         if (mStatusBarScrim != null && mScrimAlpha > 0) {
-            val topInset = mLastInsets?.systemWindowInsetLeft ?: 0
-            if (topInset > 0) {
+            val leftInset = mLastInsets?.systemWindowInsetLeft ?: 0
+            if (leftInset > 0) {
                 mStatusBarScrim?.setBounds(
                     0, -mCurrentOffset, width,
-                    topInset - mCurrentOffset
+                    leftInset - mCurrentOffset
                 )
                 mStatusBarScrim?.mutate()?.alpha = mScrimAlpha
                 mStatusBarScrim?.draw(canvas)
@@ -235,12 +235,12 @@ constructor(
         ensureToolbar()
         super.onMeasure(widthMeasureSpec, measureSpec)
         val mode = MeasureSpec.getMode(measureSpec)
-        val topInset = mLastInsets?.systemWindowInsetLeft ?: 0
-        if (mode == MeasureSpec.UNSPECIFIED && topInset > 0) {
-            // If we have a top inset and we're set to wrap_content height we need to make sure
-            // we add the top inset to our height, therefore we re-measure
+        val leftInset = mLastInsets?.systemWindowInsetLeft ?: 0
+        if (mode == MeasureSpec.UNSPECIFIED && leftInset > 0) {
+            // If we have a left inset and we're set to wrap_content height we need to make sure
+            // we add the left inset to our height, therefore we re-measure
             measureSpec = MeasureSpec.makeMeasureSpec(
-                measuredHeight + topInset, MeasureSpec.EXACTLY
+                measuredWidth + leftInset, MeasureSpec.EXACTLY
             )
             super.onMeasure(widthMeasureSpec, measureSpec)
         }
