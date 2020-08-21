@@ -527,6 +527,12 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
 
         // Make sure we reset in case we had missed a previous important event.
         if (action == MotionEvent.ACTION_DOWN) {
+            // Not passing touch event to parent
+            ViewParent parent = getParent();
+            if (parent != null) {
+                parent.requestDisallowInterceptTouchEvent(true);
+            }
+
             resetTouchBehaviors(true);
         }
 
