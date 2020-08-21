@@ -404,9 +404,9 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             ?: IntArray(2).also { mTmpStatesArray = it }
         val states = super.onCreateDrawableState(extraSpace + extraStates.size)
         extraStates[0] =
-            if (mCollapsible) R.attr.state_collapsible else -R.attr.state_collapsible
+            if (mCollapsible) com.google.android.material.R.attr.state_collapsible else -com.google.android.material.R.attr.state_collapsible
         extraStates[1] =
-            if (mCollapsible && mCollapsed) R.attr.state_collapsed else -R.attr.state_collapsed
+            if (mCollapsible && mCollapsed) com.google.android.material.R.attr.state_collapsed else -com.google.android.material.R.attr.state_collapsed
         return View.mergeDrawableStates(states, extraStates)
     }
 
@@ -512,11 +512,11 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             c,
             attrs
         ) {
-            val a = c.obtainStyledAttributes(attrs, R.styleable.AppBarLayout_Layout)
-            scrollFlags = a.getInt(R.styleable.AppBarLayout_Layout_layout_scrollFlags, 0)
-            if (a.hasValue(R.styleable.AppBarLayout_Layout_layout_scrollInterpolator)) {
+            val a = c.obtainStyledAttributes(attrs, com.google.android.material.R.styleable.AppBarLayout_Layout)
+            scrollFlags = a.getInt(com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollFlags, 0)
+            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollInterpolator)) {
                 val resId = a.getResourceId(
-                    R.styleable.AppBarLayout_Layout_layout_scrollInterpolator, 0
+                    com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollInterpolator, 0
                 )
                 scrollInterpolator = AnimationUtils.loadInterpolator(
                     c, resId
@@ -524,14 +524,14 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             }
             val b = c.obtainStyledAttributes(
                 attrs,
-                R.styleable.CollapsingToolbarLayout_Layout
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout
             )
             collapseMode = b.getInt(
-                R.styleable.CollapsingToolbarLayout_Layout_layout_collapseMode,
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout_layout_collapseMode,
                 COLLAPSE_MODE_OFF
             )
             parallaxMultiplier = b.getFloat(
-                R.styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier,
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier,
                 0.5f
             )
             a.recycle()
@@ -1356,10 +1356,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         ) : super(context, attrs) {
             val a = context.obtainStyledAttributes(
                 attrs,
-                R.styleable.ScrollingViewBehavior_Layout
+                com.google.android.material.R.styleable.ScrollingViewBehavior_Layout
             )
             overlayLeft = a.getDimensionPixelSize(
-                R.styleable.ScrollingViewBehavior_Layout_behavior_overlapTop, 0
+                com.google.android.material.R.styleable.ScrollingViewBehavior_Layout_behavior_overlapTop, 0
             )
             a.recycle()
         }
@@ -1473,10 +1473,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
     } //
 
     //    static ViewOffsetHelper getViewOffsetHelper(View view) {
-    //        ViewOffsetHelper offsetHelper = (ViewOffsetHelper) view.getTag(R.id.view_offset_helper);
+    //        ViewOffsetHelper offsetHelper = (ViewOffsetHelper) view.getTag(com.google.android.material.R.id.view_offset_helper);
     //        if (offsetHelper == null) {
     //            offsetHelper = new ViewOffsetHelper(view);
-    //            view.setTag(R.id.view_offset_helper, offsetHelper);
+    //            view.setTag(com.google.android.material.R.id.view_offset_helper, offsetHelper);
     //        }
     //        return offsetHelper;
     //    }
@@ -1526,24 +1526,24 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
     init {
         orientation = HORIZONTAL
         val a = context.obtainStyledAttributes(
-            attrs, R.styleable.AppBarLayout,
-            0, R.style.Widget_Design_AppBarLayout
+            attrs, com.google.android.material.R.styleable.AppBarLayout,
+            0, com.google.android.material.R.style.Widget_Design_AppBarLayout
         )
-        ViewCompat.setBackground(this, a.getDrawable(R.styleable.AppBarLayout_android_background))
-        if (a.hasValue(R.styleable.AppBarLayout_expanded)) {
-            setExpanded(a.getBoolean(R.styleable.AppBarLayout_expanded, false), false, false)
+        ViewCompat.setBackground(this, a.getDrawable(com.google.android.material.R.styleable.AppBarLayout_android_background))
+        if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_expanded)) {
+            setExpanded(a.getBoolean(com.google.android.material.R.styleable.AppBarLayout_expanded, false), false, false)
         }
         if (Build.VERSION.SDK_INT >= 26) {
             // In O+, we have these values set in the style. Since there is no defStyleAttr for
             // AppBarLayout at the AppCompat level, check for these attributes here.
-            if (a.hasValue(R.styleable.AppBarLayout_android_keyboardNavigationCluster)) {
+            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster)) {
                 this.isKeyboardNavigationCluster = a.getBoolean(
-                    R.styleable.AppBarLayout_android_keyboardNavigationCluster, false
+                    com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster, false
                 )
             }
-            if (a.hasValue(R.styleable.AppBarLayout_android_touchscreenBlocksFocus)) {
+            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus)) {
                 this.touchscreenBlocksFocus = a.getBoolean(
-                    R.styleable.AppBarLayout_android_touchscreenBlocksFocus, false
+                    com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus, false
                 )
             }
         }

@@ -413,14 +413,14 @@ constructor(
         ) {
             val a = c.obtainStyledAttributes(
                 attrs,
-                R.styleable.CollapsingToolbarLayout_Layout
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout
             )
             collapseMode = a.getInt(
-                R.styleable.CollapsingToolbarLayout_Layout_layout_collapseMode,
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout_layout_collapseMode,
                 COLLAPSE_MODE_OFF
             )
             parallaxMultiplier = a.getFloat(
-                R.styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier,
+                com.google.android.material.R.styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier,
                 DEFAULT_PARALLAX_MULTIPLIER
             )
             a.recycle()
@@ -509,10 +509,10 @@ constructor(
 
         fun getViewOffsetHelper(view: View): ViewOffsetHelper {
             var offsetHelper =
-                view.getTag(R.id.view_offset_helper) as? ViewOffsetHelper
+                view.getTag(com.google.android.material.R.id.view_offset_helper) as? ViewOffsetHelper
             if (offsetHelper == null) {
                 offsetHelper = ViewOffsetHelper(view)
-                view.setTag(R.id.view_offset_helper, offsetHelper)
+                view.setTag(com.google.android.material.R.id.view_offset_helper, offsetHelper)
             }
             return offsetHelper
         }
@@ -521,20 +521,24 @@ constructor(
     init {
         val a = context.obtainStyledAttributes(
             attrs,
-            R.styleable.CollapsingToolbarLayout, defStyleAttr,
-            R.style.Widget_Design_CollapsingToolbar
+            com.google.android.material.R.styleable.CollapsingToolbarLayout, defStyleAttr,
+            com.google.android.material.R.style.Widget_Design_CollapsingToolbar
         )
         mCollapsingTitleEnabled = a.getBoolean(
-            R.styleable.CollapsingToolbarLayout_titleEnabled, true
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_titleEnabled, true
         )
         mScrimVisibleHeightTrigger = a.getDimensionPixelSize(
-            R.styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger, -1
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger,
+            -1
         )
         scrimAnimationDuration = a.getInt(
-            R.styleable.CollapsingToolbarLayout_scrimAnimationDuration,
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimAnimationDuration,
             DEFAULT_SCRIM_ANIMATION_DURATION
         ).toLong()
-        mToolbarId = a.getResourceId(R.styleable.CollapsingToolbarLayout_toolbarId, -1)
+        mToolbarId = a.getResourceId(
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_toolbarId,
+            -1
+        )
         a.recycle()
         setWillNotDraw(false)
         ViewCompat.setOnApplyWindowInsetsListener(
