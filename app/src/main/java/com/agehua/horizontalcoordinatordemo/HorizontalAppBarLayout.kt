@@ -47,6 +47,50 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
     private var mCollapsed = false
     private var mTmpStatesArray: IntArray? = null
 
+    init {
+        orientation = HORIZONTAL
+        val a = context.obtainStyledAttributes(
+            attrs, com.google.android.material.R.styleable.AppBarLayout,
+            0, com.google.android.material.R.style.Widget_Design_AppBarLayout
+        )
+        ViewCompat.setBackground(
+            this,
+            a.getDrawable(com.google.android.material.R.styleable.AppBarLayout_android_background)
+        )
+        if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_expanded)) {
+            setExpanded(
+                a.getBoolean(
+                    com.google.android.material.R.styleable.AppBarLayout_expanded,
+                    false
+                ), false, false
+            )
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            // In O+, we have these values set in the style. Since there is no defStyleAttr for
+            // AppBarLayout at the AppCompat level, check for these attributes here.
+            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster)) {
+                this.isKeyboardNavigationCluster = a.getBoolean(
+                    com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster,
+                    false
+                )
+            }
+            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus)) {
+                this.touchscreenBlocksFocus = a.getBoolean(
+                    com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus,
+                    false
+                )
+            }
+        }
+        a.recycle()
+        ViewCompat.setOnApplyWindowInsetsListener(
+            this
+        ) { v: View?, insets: WindowInsetsCompat? ->
+            onWindowInsetChanged(
+                insets
+            )
+        }
+    }
+
     /**
      * Add a listener that will be called when the offset of this [HorizontalAppBarLayout] changes.
      *
@@ -512,11 +556,18 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             c,
             attrs
         ) {
-            val a = c.obtainStyledAttributes(attrs, com.google.android.material.R.styleable.AppBarLayout_Layout)
-            scrollFlags = a.getInt(com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollFlags, 0)
+            val a = c.obtainStyledAttributes(
+                attrs,
+                com.google.android.material.R.styleable.AppBarLayout_Layout
+            )
+            scrollFlags = a.getInt(
+                com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollFlags,
+                0
+            )
             if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollInterpolator)) {
                 val resId = a.getResourceId(
-                    com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollInterpolator, 0
+                    com.google.android.material.R.styleable.AppBarLayout_Layout_layout_scrollInterpolator,
+                    0
                 )
                 scrollInterpolator = AnimationUtils.loadInterpolator(
                     c, resId
@@ -1359,7 +1410,8 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 com.google.android.material.R.styleable.ScrollingViewBehavior_Layout
             )
             overlayLeft = a.getDimensionPixelSize(
-                com.google.android.material.R.styleable.ScrollingViewBehavior_Layout_behavior_overlapTop, 0
+                com.google.android.material.R.styleable.ScrollingViewBehavior_Layout_behavior_overlapTop,
+                0
             )
             a.recycle()
         }
@@ -1521,39 +1573,5 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         const val PENDING_ACTION_ANIMATE_ENABLED = 0x4
         const val PENDING_ACTION_FORCE = 0x8
         private const val INVALID_SCROLL_RANGE = -1
-    }
-
-    init {
-        orientation = HORIZONTAL
-        val a = context.obtainStyledAttributes(
-            attrs, com.google.android.material.R.styleable.AppBarLayout,
-            0, com.google.android.material.R.style.Widget_Design_AppBarLayout
-        )
-        ViewCompat.setBackground(this, a.getDrawable(com.google.android.material.R.styleable.AppBarLayout_android_background))
-        if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_expanded)) {
-            setExpanded(a.getBoolean(com.google.android.material.R.styleable.AppBarLayout_expanded, false), false, false)
-        }
-        if (Build.VERSION.SDK_INT >= 26) {
-            // In O+, we have these values set in the style. Since there is no defStyleAttr for
-            // AppBarLayout at the AppCompat level, check for these attributes here.
-            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster)) {
-                this.isKeyboardNavigationCluster = a.getBoolean(
-                    com.google.android.material.R.styleable.AppBarLayout_android_keyboardNavigationCluster, false
-                )
-            }
-            if (a.hasValue(com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus)) {
-                this.touchscreenBlocksFocus = a.getBoolean(
-                    com.google.android.material.R.styleable.AppBarLayout_android_touchscreenBlocksFocus, false
-                )
-            }
-        }
-        a.recycle()
-        ViewCompat.setOnApplyWindowInsetsListener(
-            this
-        ) { v: View?, insets: WindowInsetsCompat? ->
-            onWindowInsetChanged(
-                insets
-            )
-        }
     }
 }
