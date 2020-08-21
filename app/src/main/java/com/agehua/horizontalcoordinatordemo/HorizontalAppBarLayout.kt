@@ -1,6 +1,7 @@
 package com.agehua.horizontalcoordinatordemo
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build
@@ -653,6 +654,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         private var mOnDragCallback: DragCallback? =
             null
 
+        // Fix snap issue. See, https://stackoverflow.com/a/48866054/1939549
+        private var mStartedScrollType: Int = -1
+        private var mSkipNextStop = false
+
         constructor() {}
         constructor(context: Context?, attrs: AttributeSet?) : super(
             context,
@@ -668,6 +673,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
          * @return true means CoordinatorLayout need to consume the event and should invoke
          * AppBarLayout.Behavior.onNestedPreScroll()
          */
+        @SuppressLint("WrongConstant")
         override fun onStartNestedScroll(
             parent: HorizontalCoordinatorLayout,
             child: HorizontalAppBarLayout,
@@ -676,6 +682,13 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             nestedScrollAxes: Int,
             type: Int
         ): Boolean {
+            // Fix snap issue. See, https://stackoverflow.com/a/48866054/1939549
+            if (mStartedScrollType != -1) {
+                onStopNestedScroll(parent, child, target, mStartedScrollType)
+                mSkipNextStop = true
+            }
+            mStartedScrollType = type
+
             // Return true if we're nested scrolling vertically, and we have scrollable children
             // and the scrolling view is big enough to scroll
             val started =
@@ -743,7 +756,19 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             target: View,
             type: Int
         ) {
-            if (type == ViewCompat.TYPE_TOUCH) {
+            // Fix snap issue. See, https://stackoverflow.com/a/48866054/1939549
+            if (mSkipNextStop) {
+                mSkipNextStop = false
+                return
+            }
+            if (mStartedScrollType == -1) {
+                return
+            }
+            mStartedScrollType = -1
+
+            // Fix snap issue. See, https://stackoverflow.com/a/48866054/1939549
+            // Always snapToChildIfNeeded, because want to snap even after fling
+            if (ViewCompat.TYPE_TOUCH == ViewCompat.TYPE_TOUCH) {
                 // If we haven't been flung then let's see if the current view has been set to snap
                 snapToChildIfNeeded(horizontalCoordinatorLayout, abl)
             }
