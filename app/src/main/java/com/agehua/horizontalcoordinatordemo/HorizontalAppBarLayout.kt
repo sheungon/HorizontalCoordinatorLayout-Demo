@@ -265,11 +265,13 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
      * Return the scroll range when scrolling up from a nested pre-scroll.
      */
     val upNestedPreScrollRange: Int
-        get() = totalScrollRange// If we've hit an non-quick return scrollable view, and we've already hit a
+        get() = totalScrollRange
+
+    // If we've hit an non-quick return scrollable view, and we've already hit a
     // quick return view, return now
-// Else use the full Width (minus the top inset)// Only enter by the amount of the collapsed height// If they're set to enter collapsed, use the minimum height// First take the margin into account
+    // Else use the full Width (minus the top inset)// Only enter by the amount of the collapsed height// If they're set to enter collapsed, use the minimum height// First take the margin into account
     // The view has the quick return flag combination...
-// If we already have a valid value, return it
+    // If we already have a valid value, return it
 
     /**
      * Return the scroll range when scrolling down from a nested pre-scroll.
@@ -307,13 +309,15 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                     break
                 }
             }
-            return Math.max(0, range).also { mDownPreScrollRange = it }
-        }// As soon as a view doesn't have the scroll flag, we end the range calculation.
+            return 0.coerceAtLeast(range).also { mDownPreScrollRange = it }
+        }
+
+    // As soon as a view doesn't have the scroll flag, we end the range calculation.
     // This is because views below can not scroll under a fixed view.
-// For a collapsing exit scroll, we to take the collapsed Width into account.
+    // For a collapsing exit scroll, we to take the collapsed Width into account.
     // We also break the range straight away since later views can't scroll
     // beneath us
-// We're set to scroll so add the child's Width// If we already have a valid value, return it
+    // We're set to scroll so add the child's Width// If we already have a valid value, return it
 
     /**
      * Return the scroll range when scrolling down from a nested scroll.
@@ -351,7 +355,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 }
                 i++
             }
-            return Math.max(0, range).also { mDownScrollRange = it }
+            return 0.coerceAtLeast(range).also { mDownScrollRange = it }
         }
 
     fun dispatchOffsetUpdates(offset: Int) {
@@ -658,12 +662,11 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         private var mStartedScrollType: Int = -1
         private var mSkipNextStop = false
 
-        constructor() {}
+        constructor()
         constructor(context: Context?, attrs: AttributeSet?) : super(
             context,
             attrs
-        ) {
-        }
+        )
 
         /**
          * NestedScrollView as child of View, startNestedScroll(...) will be invoked on scrolling,
@@ -790,9 +793,9 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             horizontalCoordinatorLayout: HorizontalCoordinatorLayout,
             child: HorizontalAppBarLayout,
             offset: Int,
-            velocity: Float
+            inputVelocity: Float
         ) {
-            var velocity = velocity
+            var velocity = inputVelocity
             val distance = abs(getLeftRightOffsetForScrollingSibling() - offset)
             val duration: Int
             velocity = Math.abs(velocity)
