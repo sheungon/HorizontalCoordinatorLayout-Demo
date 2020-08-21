@@ -1165,11 +1165,11 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                     ) {
                         // We're set to enter always collapsed so we are only collapsed when
                         // being scrolled down, and in a collapsed offset
-                        collapsed = -offset >= child.bottom - minWidth - layout.leftInset
+                        collapsed = -offset >= child.right - minWidth - layout.leftInset
                     } else if (flags and LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED != 0) {
                         // We're set to exit until collapsed, so any offset which results in
                         // the minimum Width (or less) being shown is collapsed
-                        collapsed = -offset >= child.bottom - minWidth - layout.leftInset
+                        collapsed = -offset >= child.right - minWidth - layout.leftInset
                     }
                 }
                 val changed = layout.setCollapsedState(collapsed)
