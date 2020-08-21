@@ -641,7 +641,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
      * The default [HorizontalAppBarLayout.Behavior] for [HorizontalAppBarLayout]. Implements the necessary nested
      * scroll handling with offsetting.
      */
-    class Behavior : HorizontalHeaderBehavior<HorizontalAppBarLayout> {
+    open class Behavior : HorizontalHeaderBehavior<HorizontalAppBarLayout> {
         var mOffsetDelta = 0
         private var mOffsetAnimator: ValueAnimator? = null
         private var mOffsetToChildIndexOnLayout =

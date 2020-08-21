@@ -277,12 +277,10 @@ abstract class HorizontalHeaderBehavior<V : View>
 
     private inner class FlingRunnable internal constructor(
         private val mParent: HorizontalCoordinatorLayout,
-        layout: V
+        private val layout: V
     ) : Runnable {
-        private val mLayout: V?
         override fun run() {
             val scroller = mScroller
-            val layout = mLayout
             if (layout != null && scroller != null) {
                 if (scroller.computeScrollOffset()) {
                     setHeaderLeftRightOffset(mParent, layout, scroller.currX)
@@ -292,10 +290,6 @@ abstract class HorizontalHeaderBehavior<V : View>
                     onFlingFinished(mParent, layout)
                 }
             }
-        }
-
-        init {
-            mLayout = layout
         }
     }
 
