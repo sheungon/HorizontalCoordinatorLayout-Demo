@@ -2055,7 +2055,7 @@ public class HorizontalCoordinatorLayout extends ViewGroup implements NestedScro
          * @param context
          * @param attrs
          */
-        public Behavior(Context context, AttributeSet attrs) {
+        public Behavior(@NonNull Context context, @Nullable AttributeSet attrs) {
         }
 
         /**

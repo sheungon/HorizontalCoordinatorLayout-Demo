@@ -663,7 +663,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         private var mSkipNextStop = false
 
         constructor()
-        constructor(context: Context?, attrs: AttributeSet?) : super(
+        constructor(context: Context, attrs: AttributeSet?) : super(
             context,
             attrs
         )

@@ -42,7 +42,7 @@ abstract class HorizontalHeaderBehavior<V : View>
     private var mVelocityTracker: VelocityTracker? = null
 
     constructor()
-    constructor(context: Context?, attrs: AttributeSet?) : super(
+    constructor(context: Context, attrs: AttributeSet?) : super(
         context,
         attrs
     )

@@ -47,7 +47,7 @@ internal abstract class HeaderScrollingViewBehavior :
     var overlayTop = 0
 
     constructor()
-    constructor(context: Context?, attrs: AttributeSet?) : super(
+    constructor(context: Context, attrs: AttributeSet?) : super(
         context,
         attrs
     )

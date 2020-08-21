@@ -30,7 +30,7 @@ open class ViewOffsetBehavior<V : View> :
     private var tempLeftRightOffset = AtomicInteger(0)
 
     constructor()
-    constructor(context: Context?, attrs: AttributeSet?) : super(
+    constructor(context: Context, attrs: AttributeSet?) : super(
         context,
         attrs
     )
