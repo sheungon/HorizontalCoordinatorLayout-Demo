@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -119,16 +120,20 @@ abstract class HorizontalHeaderScrollingViewBehavior :
             val lp =
                 child.layoutParams as HorizontalCoordinatorLayout.LayoutParams
             val available = tempRect1
-            if (layoutDirection == 0) { // Horizontal
-                available[header.right + lp.leftMargin,
-                        parent.top + lp.topMargin,
-                        parent.width - parent.paddingRight - lp.rightMargin] =
-                    parent.height + header.bottom - parent.paddingBottom - lp.bottomMargin
+            if (layoutDirection == LinearLayout.HORIZONTAL) { // Horizontal
+                available.set(
+                    header.right + lp.leftMargin,
+                    parent.paddingTop + lp.topMargin,
+                    parent.width + header.right - parent.paddingRight - lp.rightMargin,
+                    parent.height - parent.paddingBottom - lp.bottomMargin
+                )
             } else {
-                available[parent.paddingLeft + lp.leftMargin,
-                        header.bottom + lp.topMargin,
-                        parent.width - parent.paddingRight - lp.rightMargin] =
+                available.set(
+                    parent.paddingLeft + lp.leftMargin,
+                    header.bottom + lp.topMargin,
+                    parent.width - parent.paddingRight - lp.rightMargin,
                     parent.height + header.bottom - parent.paddingBottom - lp.bottomMargin
+                )
             }
             val parentInsets = parent.lastWindowInsets
             if (parentInsets != null && ViewCompat.getFitsSystemWindows(parent)
