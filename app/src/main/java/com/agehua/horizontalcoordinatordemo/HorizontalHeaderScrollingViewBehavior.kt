@@ -120,10 +120,14 @@ abstract class HorizontalHeaderScrollingViewBehavior :
                 child.layoutParams as HorizontalCoordinatorLayout.LayoutParams
             val available = tempRect1
             if (layoutDirection == 0) { // Horizontal
-                available[header.right + lp.leftMargin, parent.top + lp.topMargin, parent.width - parent.paddingRight - lp.rightMargin] =
+                available[header.right + lp.leftMargin,
+                        parent.top + lp.topMargin,
+                        parent.width - parent.paddingRight - lp.rightMargin] =
                     parent.height + header.bottom - parent.paddingBottom - lp.bottomMargin
             } else {
-                available[parent.paddingLeft + lp.leftMargin, header.bottom + lp.topMargin, parent.width - parent.paddingRight - lp.rightMargin] =
+                available[parent.paddingLeft + lp.leftMargin,
+                        header.bottom + lp.topMargin,
+                        parent.width - parent.paddingRight - lp.rightMargin] =
                     parent.height + header.bottom - parent.paddingBottom - lp.bottomMargin
             }
             val parentInsets = parent.lastWindowInsets

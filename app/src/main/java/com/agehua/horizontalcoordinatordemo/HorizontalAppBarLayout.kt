@@ -1421,7 +1421,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             child: View,
             dependency: View
         ): Boolean =
-            // We depend on any AppBarLayouts
+            // We depend on any HorizontalAppBarLayout
             dependency is HorizontalAppBarLayout
 
         override fun onDependentViewChanged(
@@ -1434,8 +1434,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         }
 
         override fun onRequestChildRectangleOnScreen(
-            parent: HorizontalCoordinatorLayout, child: View,
-            rectangle: Rect, immediate: Boolean
+            parent: HorizontalCoordinatorLayout,
+            child: View,
+            rectangle: Rect,
+            immediate: Boolean
         ): Boolean {
             val header = findFirstDependency(parent.getDependencies(child))
             if (header != null) {
