@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.agehua.horizontalcoordinatordemo.HorizontalCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:paddingTop="50dp"
-    android:paddingBottom="50dp">
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:paddingTop="30dp"
+    android:paddingBottom="30dp">
 
-    <com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent">
-
-        <com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout
-            android:id="@+id/layout_collapsing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_blue_light"
-            app:layout_scrollFlags="scroll|snap|enterAlways">
-
-            <include
-                layout="@layout/simple_list_item_1"
-                android:visibility="visible" />
-
-        </com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout>
-    </com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout>
-
-    <LinearLayout
-        android:id="@+id/btn_app_bar_mini_floating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/half_round_button_bg"
-        android:elevation="15dp"
-        android:orientation="vertical"
-        app:layout_behavior="com.agehua.horizontalcoordinatordemo.HorizontalFloatingButtonBehaviour"
-        tools:ignore="UnusedAttribute">
-
-        <ImageView
-            android:id="@+id/banner2"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_theaters_black_48dp" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1d9d29"
+    <com.agehua.horizontalcoordinatordemo.HorizontalCoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
         android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_behavior="com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout$ScrollingViewBehavior"
-        tools:listitem="@layout/simple_list_item_1">
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
 
-</com.agehua.horizontalcoordinatordemo.HorizontalCoordinatorLayout>
+            <com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout
+                android:id="@+id/layout_collapsing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_blue_light"
+                app:layout_scrollFlags="scroll|snap|enterAlways">
+
+                <include
+                    layout="@layout/simple_list_item_1"
+                    android:visibility="visible" />
+
+            </com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout>
+        </com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_app_bar_mini_floating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/half_round_button_bg"
+            android:elevation="15dp"
+            android:orientation="vertical"
+            app:layout_behavior="com.agehua.horizontalcoordinatordemo.HorizontalFloatingButtonBehaviour"
+            tools:ignore="UnusedAttribute">
+
+            <ImageView
+                android:id="@+id/banner2"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_theaters_black_48dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#1d9d29"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_behavior="com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout$ScrollingViewBehavior"
+            tools:listitem="@layout/simple_list_item_1">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </com.agehua.horizontalcoordinatordemo.HorizontalCoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
