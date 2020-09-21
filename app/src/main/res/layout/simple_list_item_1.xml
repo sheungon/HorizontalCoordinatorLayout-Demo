@@ -23,7 +23,7 @@
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_height"
         android:scaleType="center"
-        tools:src="@drawable/ic_text_rotation_none_black_48dp" />
+        android:src="@drawable/ic_text_rotation_none_black_48dp" />
 
     <TextView
         android:id="@android:id/text1"
@@ -32,5 +32,5 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        tools:text="Test" />
+        android:text="Test" />
 </LinearLayout>

@@ -5,7 +5,9 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingTop="50dp"
+    android:paddingBottom="50dp">
 
     <com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout
         android:id="@+id/appbar"
@@ -17,11 +19,12 @@
             android:id="@+id/layout_collapsing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_light"
             app:layout_scrollFlags="scroll|snap|enterAlways">
 
             <include
                 layout="@layout/simple_list_item_1"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
         </com.agehua.horizontalcoordinatordemo.HorizontalCollapsingToolbarLayout>
     </com.agehua.horizontalcoordinatordemo.HorizontalAppBarLayout>
