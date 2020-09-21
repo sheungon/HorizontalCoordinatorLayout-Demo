@@ -21,7 +21,7 @@ class HorizontalFloatingButtonBehaviour : ViewOffsetBehavior<View> {
         child: View,
         dependency: View
     ): Boolean {
-        val bottom = dependency.bottom
+        val bottom = dependency.bottom - parent.paddingTop
         val center = bottom / 2f
         val halfChild = child.height / 2f
         val width = child.width
