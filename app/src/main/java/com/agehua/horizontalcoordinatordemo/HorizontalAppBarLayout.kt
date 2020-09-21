@@ -23,12 +23,13 @@ import androidx.core.util.ObjectsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.customview.view.AbsSavedState
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
+@Suppress("unused", "MemberVisibilityCanBePrivate", "SameParameterValue")
+@SuppressLint("CustomViewStyleable", "PrivateResource")
 @HorizontalCoordinatorLayout.DefaultBehavior(HorizontalAppBarLayout.Behavior::class)
 class HorizontalAppBarLayout @JvmOverloads constructor(
     context: Context,
@@ -62,7 +63,9 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 a.getBoolean(
                     com.google.android.material.R.styleable.AppBarLayout_expanded,
                     false
-                ), false, false
+                ),
+                animate = false,
+                force = false
             )
         }
         if (Build.VERSION.SDK_INT >= 26) {
@@ -84,7 +87,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         a.recycle()
         ViewCompat.setOnApplyWindowInsetsListener(
             this
-        ) { v: View?, insets: WindowInsetsCompat? ->
+        ) { _: View?, insets: WindowInsetsCompat? ->
             onWindowInsetChanged(
                 insets
             )
@@ -147,10 +150,6 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             i++
         }
         updateCollapsible()
-
-//        for (int i = 0, z = getChildCount(); i < z; i++) {
-//            getViewOffsetHelper(getChildAt(i)).onViewLayout();
-//        }
     }
 
     private fun updateCollapsible() {
@@ -298,7 +297,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 }
                 i++
             }
-            return Math.max(0, range - leftInset).also { mTotalScrollRange = it }
+            return 0.coerceAtLeast(range - leftInset).also { mTotalScrollRange = it }
         }
 
     fun hasScrollableChildren(): Boolean {
@@ -337,15 +336,19 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                     // First take the margin into account
                     range += lp.leftMargin + lp.rightMargin
                     // The view has the quick return flag combination...
-                    range += if (flags and LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED != 0) {
-                        // If they're set to enter collapsed, use the minimum height
-                        ViewCompat.getMinimumWidth(child)
-                    } else if (flags and LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED != 0) {
-                        // Only enter by the amount of the collapsed height
-                        childWidth - ViewCompat.getMinimumWidth(child)
-                    } else {
-                        // Else use the full Width (minus the left inset)
-                        childWidth - leftInset
+                    range += when {
+                        flags and LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED != 0 -> {
+                            // If they're set to enter collapsed, use the minimum height
+                            ViewCompat.getMinimumWidth(child)
+                        }
+                        flags and LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED != 0 -> {
+                            // Only enter by the amount of the collapsed height
+                            childWidth - ViewCompat.getMinimumWidth(child)
+                        }
+                        else -> {
+                            // Else use the full Width (minus the left inset)
+                            childWidth - leftInset
+                        }
                     }
                 } else if (range > 0) {
                     // If we've hit an non-quick return scrollable view, and we've already hit a
@@ -517,6 +520,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         var collapseMode =
             COLLAPSE_MODE_OFF
         var parallaxMultiplier = 0.5f
+
         /**
          * Returns the scrolling flags.
          *
@@ -526,7 +530,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         /**
          * Set the scrolling flags.
          *
-         * @param flags bitwise int of [.SCROLL_FLAG_SCROLL],
+         * bitwise int of [.SCROLL_FLAG_SCROLL],
          * [.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED], [.SCROLL_FLAG_ENTER_ALWAYS],
          * [.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED] and [.SCROLL_FLAG_SNAP].
          * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollFlags
@@ -535,6 +539,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         @get:ScrollFlags
         var scrollFlags =
             SCROLL_FLAG_SCROLL
+
         /**
          * Returns the [Interpolator] being used for scrolling the view associated with this
          * [HorizontalAppBarLayout.LayoutParams]. Null indicates 'normal' 1-to-1 scrolling.
@@ -546,7 +551,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
          * Set the interpolator to when scrolling the view associated with this
          * [HorizontalAppBarLayout.LayoutParams].
          *
-         * @param interpolator the interpolator to use, or null to use normal 1-to-1 scrolling.
+         * The interpolator to use, or null to use normal 1-to-1 scrolling.
          * @attr ref android.support.design.R.styleable#AppBarLayout_Layout_layout_scrollInterpolator
          * @see .getScrollInterpolator
          */
@@ -589,10 +594,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             b.recycle()
         }
 
-        constructor(width: Int, height: Int) : super(width, height) {}
-        constructor(width: Int, height: Int, weight: Float) : super(width, height, weight) {}
-        constructor(p: ViewGroup.LayoutParams?) : super(p) {}
-        constructor(source: MarginLayoutParams?) : super(source) {}
+        constructor(width: Int, height: Int) : super(width, height)
+        constructor(width: Int, height: Int, weight: Float) : super(width, height, weight)
+        constructor(p: ViewGroup.LayoutParams?) : super(p)
+        constructor(source: MarginLayoutParams?) : super(source)
 
         @RequiresApi(19)
         constructor(source: LinearLayout.LayoutParams?) : super(source) {
@@ -623,7 +628,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             flag = true,
             value = [SCROLL_FLAG_SCROLL, SCROLL_FLAG_EXIT_UNTIL_COLLAPSED, SCROLL_FLAG_ENTER_ALWAYS, SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED, SCROLL_FLAG_SNAP]
         )
-        @Retention(RetentionPolicy.SOURCE)
+        @Retention(AnnotationRetention.SOURCE)
         annotation class ScrollFlags
 
         @IntDef(
@@ -631,7 +636,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             COLLAPSE_MODE_PIN,
             COLLAPSE_MODE_PARALLAX
         )
-        @Retention(RetentionPolicy.SOURCE)
+        @Retention(AnnotationRetention.SOURCE)
         internal annotation class CollapseMode
         companion object {
             const val COLLAPSE_MODE_OFF = 0
@@ -849,9 +854,9 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             var velocity = inputVelocity
             val distance = abs(getLeftRightOffsetForScrollingSibling() - offset)
             val duration: Int
-            velocity = Math.abs(velocity)
+            velocity = abs(velocity)
             duration = if (velocity > 0) {
-                3 * Math.round(1000 * (distance / velocity))
+                3 * (1000 * (distance / velocity)).roundToInt()
             } else {
                 val distanceRatio = distance.toFloat() / child.width
                 ((distanceRatio + 1) * 150).toInt()
@@ -883,10 +888,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             } else {
                 offsetAnimator.cancel()
             }
-            offsetAnimator.duration = Math.min(
-                duration,
-                MAX_OFFSET_ANIMATION_DURATION
-            ).toLong()
+            offsetAnimator.duration = duration.coerceAtMost(MAX_OFFSET_ANIMATION_DURATION).toLong()
             offsetAnimator.setIntValues(currentOffset, offset)
             offsetAnimator.start()
         }
@@ -990,6 +992,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
         override fun onLayoutChild(
             parent: HorizontalCoordinatorLayout,
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
             abl: HorizontalAppBarLayout,
             layoutDirection: Int
         ): Boolean {
@@ -1006,7 +1009,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 offset += if (mOffsetToChildIndexOnLayoutIsMinWidth) {
                     ViewCompat.getMinimumWidth(child) + abl.leftInset
                 } else {
-                    Math.round(child.width * mOffsetToChildIndexOnLayoutPerc)
+                    (child.width * mOffsetToChildIndexOnLayoutPerc).roundToInt()
                 }
                 setHeaderLeftRightOffset(parent, abl, offset)
             } else if (pendingAction != PENDING_ACTION_NONE) {
@@ -1082,36 +1085,38 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         }
 
         override fun setHeaderLeftRightOffset(
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
             horizontalCoordinatorLayout: HorizontalCoordinatorLayout,
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
             appBarLayout: HorizontalAppBarLayout,
             newOffset: Int,
             minOffset: Int,
             maxOffset: Int
         ): Int {
-            var newOffset = newOffset
             val curOffset = getLeftRightOffsetForScrollingSibling()
             var consumed = 0
             // minOffset equals to AppBarLayout minus right，maxOffset equals to 0
             // If AppBarLayout scroll distance larger than minOffset or maxOffset, return 0
             if (minOffset != 0 && curOffset >= minOffset && curOffset <= maxOffset) {
                 // If we have some scrolling range, and we're currently within the min and max
-                // offsets, calculate a new offset //矫正newOffset，使其minOffset<=newOffset<=maxOffset
-                newOffset = MathUtils.clamp(newOffset, minOffset, maxOffset)
-                if (curOffset != newOffset) {
+                // offsets, calculate a new offset
+                // correct newOffset，make it minOffset <= newOffset <= maxOffset
+                val finalNewOffset = MathUtils.clamp(newOffset, minOffset, maxOffset)
+                if (curOffset != finalNewOffset) {
                     val interpolatedOffset =
                         if (appBarLayout.hasChildWithInterpolator()) interpolateOffset(
                             appBarLayout,
-                            newOffset
-                        ) else newOffset
+                            finalNewOffset
+                        ) else finalNewOffset
                     // Because of default setting Interpolator, interpolatedOffset=newOffset;
                     val offsetChanged = setLeftAndRightOffset(interpolatedOffset)
 
                     // Update how much dy we have consumed
                     // Record consumed dy
-                    consumed = curOffset - newOffset
+                    consumed = curOffset - finalNewOffset
                     // Update the stored sibling offset
                     // Set Interpolator, mOffsetDelta keeps = 0
-                    mOffsetDelta = newOffset - interpolatedOffset
+                    mOffsetDelta = finalNewOffset - interpolatedOffset
                     if (!offsetChanged && appBarLayout.hasChildWithInterpolator()) {
                         // If the offset hasn't changed and we're using an interpolated scroll
                         // then we need to keep any dependent views updated. CoL will do this for
@@ -1126,8 +1131,8 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
                     // Update the AppBarLayout's drawable state (for any elevation changes)
                     updateAppBarLayoutDrawableState(
-                        horizontalCoordinatorLayout, appBarLayout, newOffset,
-                        if (newOffset < curOffset) -1 else 1, false
+                        horizontalCoordinatorLayout, appBarLayout, finalNewOffset,
+                        if (finalNewOffset < curOffset) -1 else 1, false
                     )
                 }
             } else {
@@ -1144,7 +1149,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             layout: HorizontalAppBarLayout,
             offset: Int
         ): Int {
-            val absOffset = Math.abs(offset)
+            val absOffset = abs(offset)
             var i = 0
             val z = layout.childCount
             while (i < z) {
@@ -1172,12 +1177,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                         }
                         if (childScrollableWidth > 0) {
                             val offsetForView = absOffset - child.left
-                            val interpolatedDiff = Math.round(
-                                childScrollableWidth *
-                                        interpolator.getInterpolation(
-                                            offsetForView / childScrollableWidth.toFloat()
-                                        )
-                            )
+                            val interpolatedDiff = (childScrollableWidth *
+                                    interpolator.getInterpolation(
+                                        offsetForView / childScrollableWidth.toFloat()
+                                    )).roundToInt()
                             return Integer.signum(offset) * (child.left + interpolatedDiff)
                         }
                     }
@@ -1295,12 +1298,10 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
             state: Parcelable
         ) {
             if (state is SavedState) {
-                val ss =
-                    state
-                super.onRestoreInstanceState(parent, appBarLayout, ss.superState)
-                mOffsetToChildIndexOnLayout = ss.firstVisibleChildIndex
-                mOffsetToChildIndexOnLayoutPerc = ss.firstVisibleChildPercentageShown
-                mOffsetToChildIndexOnLayoutIsMinWidth = ss.firstVisibleChildAtMinimumWidth
+                super.onRestoreInstanceState(parent, appBarLayout, state.superState)
+                mOffsetToChildIndexOnLayout = state.firstVisibleChildIndex
+                mOffsetToChildIndexOnLayoutPerc = state.firstVisibleChildPercentageShown
+                mOffsetToChildIndexOnLayoutIsMinWidth = state.firstVisibleChildAtMinimumWidth
             } else {
                 super.onRestoreInstanceState(parent, appBarLayout, state)
                 mOffsetToChildIndexOnLayout =
@@ -1380,7 +1381,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 layout: HorizontalAppBarLayout,
                 offset: Int
             ): View? {
-                val absOffset = Math.abs(offset)
+                val absOffset = abs(offset)
                 var i = 0
                 val z = layout.childCount
                 while (i < z) {
@@ -1400,7 +1401,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
      * nested scrolling to automatically scroll any [HorizontalAppBarLayout] siblings.
      */
     class ScrollingViewBehavior : HorizontalHeaderScrollingViewBehavior {
-        constructor() {}
+        constructor()
         constructor(
             context: Context,
             attrs: AttributeSet?
@@ -1456,6 +1457,7 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
         }
 
         private fun offsetChildAsNeeded(
+            @Suppress("UNUSED_PARAMETER")
             parent: HorizontalCoordinatorLayout,
             child: View,
             dependency: View
@@ -1476,10 +1478,9 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
 
         override fun getOverlapRatioForOffset(header: View): Float {
             if (header is HorizontalAppBarLayout) {
-                val abl = header
-                val totalScrollRange = abl.totalScrollRange
-                val preScrollDown = abl.downNestedPreScrollRange
-                val offset = getAppBarLayoutOffset(abl)
+                val totalScrollRange = header.totalScrollRange
+                val preScrollDown = header.downNestedPreScrollRange
+                val offset = getAppBarLayoutOffset(header)
                 if (preScrollDown != 0 && totalScrollRange + offset <= preScrollDown) {
                     // If we're in a pre-scroll down. Don't use the offset at all.
                     return 0f
@@ -1524,50 +1525,8 @@ class HorizontalAppBarLayout @JvmOverloads constructor(
                 } else 0
             }
         }
-    } //
+    }
 
-    //    static ViewOffsetHelper getViewOffsetHelper(View view) {
-    //        ViewOffsetHelper offsetHelper = (ViewOffsetHelper) view.getTag(com.google.android.material.R.id.view_offset_helper);
-    //        if (offsetHelper == null) {
-    //            offsetHelper = new ViewOffsetHelper(view);
-    //            view.setTag(com.google.android.material.R.id.view_offset_helper, offsetHelper);
-    //        }
-    //        return offsetHelper;
-    //    }
-    //    private class OffsetUpdateListener implements HorizontalAppBarLayout.OnOffsetChangedListener {
-    //        OffsetUpdateListener() {
-    //        }
-    //
-    //        @Override
-    //        public void onOffsetChanged(HorizontalAppBarLayout layout, int verticalOffset) {
-    //
-    //            final int insetTop = mLastInsets != null ? mLastInsets.getSystemWindowInsetTop() : 0;
-    //
-    //            for (int i = 0, z = getChildCount(); i < z; i++) {
-    //                final View child = getChildAt(i);
-    //                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-    //                final ViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
-    //
-    //                switch (lp.mCollapseMode) {
-    //                    case LayoutParams.COLLAPSE_MODE_PIN:
-    //                        offsetHelper.setLeftAndRightOffset(MathUtils.clamp(
-    //                                -verticalOffset, 0, getMaxOffsetForPinChild(child)));
-    //                        break;
-    //                    case LayoutParams.COLLAPSE_MODE_PARALLAX:
-    //                        offsetHelper.setLeftAndRightOffset((int) Math.round(-verticalOffset * 0.5));
-    //                        break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    final int getMaxOffsetForPinChild(View child) {
-    //        final ViewOffsetHelper offsetHelper = getViewOffsetHelper(child);
-    //        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-    //        return getWidth()
-    //                - offsetHelper.getLayoutLeft()
-    //                - child.getWidth()
-    //                - lp.rightMargin;
-    //    }
     companion object {
         const val PENDING_ACTION_NONE = 0x0
         const val PENDING_ACTION_EXPANDED = 0x1

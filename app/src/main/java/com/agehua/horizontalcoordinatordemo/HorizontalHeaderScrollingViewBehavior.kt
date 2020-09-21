@@ -29,6 +29,7 @@ import androidx.core.view.ViewCompat
 /**
  *
  */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class HorizontalHeaderScrollingViewBehavior :
     ViewOffsetBehavior<View> {
 
@@ -42,7 +43,7 @@ abstract class HorizontalHeaderScrollingViewBehavior :
         private set
 
     /**
-     * @param overlayLeft the distance in px
+     * The distance in px
      */
     var overlayLeft = 0
 

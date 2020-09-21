@@ -3,25 +3,22 @@ package com.agehua.horizontalcoordinatordemo
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.LinearLayout
-import androidx.core.view.WindowInsetsCompat
 
-class HorizontalFloatingButtonBehaviour : ViewOffsetBehavior<LinearLayout> {
+@Suppress("unused")
+class HorizontalFloatingButtonBehaviour : ViewOffsetBehavior<View> {
 
     constructor()
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     override fun layoutDependsOn(
         parent: HorizontalCoordinatorLayout,
-        child: LinearLayout,
+        child: View,
         dependency: View
-    ): Boolean {
-        return dependency is HorizontalAppBarLayout
-    }
+    ): Boolean = dependency is HorizontalAppBarLayout
 
     override fun onDependentViewChanged(
         parent: HorizontalCoordinatorLayout,
-        child: LinearLayout,
+        child: View,
         dependency: View
     ): Boolean {
         val bottom = dependency.bottom
@@ -35,13 +32,5 @@ class HorizontalFloatingButtonBehaviour : ViewOffsetBehavior<LinearLayout> {
             child.x = -width * movedPercentage
         }
         return true
-    }
-
-    override fun onApplyWindowInsets(
-        coordinatorLayout: HorizontalCoordinatorLayout,
-        child: LinearLayout,
-        insets: WindowInsetsCompat
-    ): WindowInsetsCompat {
-        return super.onApplyWindowInsets(coordinatorLayout, child, insets)
     }
 }

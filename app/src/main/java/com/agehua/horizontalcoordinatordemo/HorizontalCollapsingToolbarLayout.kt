@@ -16,6 +16,7 @@
 package com.agehua.horizontalcoordinatordemo
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -30,7 +31,10 @@ import androidx.core.math.MathUtils
 import androidx.core.util.ObjectsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.math.roundToInt
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+@SuppressLint("CustomViewStyleable", "PrivateResource")
 class HorizontalCollapsingToolbarLayout
 @JvmOverloads
 constructor(
@@ -58,13 +62,41 @@ constructor(
     /**
      * Set the duration used for scrim visibility animations.
      *
-     * @param duration the duration to use in milliseconds
+     * The duration to use in milliseconds
      * @attr ref android.support.design.R.styleable#CollapsingToolbarLayout_scrimAnimationDuration
      */
     var scrimAnimationDuration: Long
     private var mScrimVisibleHeightTrigger = -1
     private var mOnOffsetChangedListener: HorizontalAppBarLayout.OnOffsetChangedListener? =
         null
+
+    init {
+        val a = context.obtainStyledAttributes(
+            attrs,
+            com.google.android.material.R.styleable.CollapsingToolbarLayout, defStyleAttr,
+            com.google.android.material.R.style.Widget_Design_CollapsingToolbar
+        )
+        mCollapsingTitleEnabled = a.getBoolean(
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_titleEnabled, true
+        )
+        mScrimVisibleHeightTrigger = a.getDimensionPixelSize(
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger,
+            -1
+        )
+        scrimAnimationDuration = a.getInt(
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimAnimationDuration,
+            DEFAULT_SCRIM_ANIMATION_DURATION
+        ).toLong()
+        mToolbarId = a.getResourceId(
+            com.google.android.material.R.styleable.CollapsingToolbarLayout_toolbarId,
+            -1
+        )
+        a.recycle()
+        setWillNotDraw(false)
+        ViewCompat.setOnApplyWindowInsetsListener(
+            this
+        ) { _, insets -> onWindowInsetChanged(insets) }
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -148,10 +180,6 @@ constructor(
         // drawChild() call, and draw our scrim just before the Toolbar is drawn
         val invalidated = false
         return super.drawChild(canvas, child, drawingTime) || invalidated
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
     }
 
     private fun ensureToolbar() {
@@ -379,14 +407,14 @@ constructor(
         /**
          * Returns the requested collapse mode.
          *
-         * @return the current mode. One of [.COLLAPSE_MODE_OFF], [.COLLAPSE_MODE_PIN]
-         * or [.COLLAPSE_MODE_PARALLAX].
+         * @return the current mode. One of [COLLAPSE_MODE_OFF], [COLLAPSE_MODE_PIN]
+         * or [COLLAPSE_MODE_PARALLAX].
          */
         /**
          * Set the collapse mode.
          *
-         * @param collapseMode one of [.COLLAPSE_MODE_OFF], [.COLLAPSE_MODE_PIN]
-         * or [.COLLAPSE_MODE_PARALLAX].
+         * one of [COLLAPSE_MODE_OFF], [COLLAPSE_MODE_PIN]
+         * or [COLLAPSE_MODE_PARALLAX].
          */
         @get:CollapseMode
         var collapseMode =
@@ -399,7 +427,7 @@ constructor(
          */
         /**
          * Set the parallax scroll multiplier used in conjunction with
-         * [.COLLAPSE_MODE_PARALLAX]. A value of `0.0` indicates no movement at all,
+         * [COLLAPSE_MODE_PARALLAX]. A value of `0.0` indicates no movement at all,
          * `1.0f` indicates normal scroll movement.
          *
          * @see .getParallaxMultiplier
@@ -463,7 +491,7 @@ constructor(
         }
     }
 
-    private inner class OffsetUpdateListener internal constructor() :
+    private inner class OffsetUpdateListener :
         HorizontalAppBarLayout.OnOffsetChangedListener {
 
         override fun onOffsetChanged(
@@ -488,7 +516,7 @@ constructor(
                         )
                     )
                     LayoutParams.COLLAPSE_MODE_PARALLAX -> offsetHelper.setLeftAndRightOffset(
-                        Math.round(-verticalOffset * lp.parallaxMultiplier)
+                        (-verticalOffset * lp.parallaxMultiplier).roundToInt()
                     )
                 }
                 i++
@@ -501,8 +529,7 @@ constructor(
         private fun getWidthWithMargins(view: View): Int {
             val lp = view.layoutParams
             if (lp is MarginLayoutParams) {
-                val mlp = lp
-                return view.width + mlp.leftMargin + mlp.rightMargin
+                return view.width + lp.leftMargin + lp.rightMargin
             }
             return view.width
         }
@@ -516,33 +543,5 @@ constructor(
             }
             return offsetHelper
         }
-    }
-
-    init {
-        val a = context.obtainStyledAttributes(
-            attrs,
-            com.google.android.material.R.styleable.CollapsingToolbarLayout, defStyleAttr,
-            com.google.android.material.R.style.Widget_Design_CollapsingToolbar
-        )
-        mCollapsingTitleEnabled = a.getBoolean(
-            com.google.android.material.R.styleable.CollapsingToolbarLayout_titleEnabled, true
-        )
-        mScrimVisibleHeightTrigger = a.getDimensionPixelSize(
-            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger,
-            -1
-        )
-        scrimAnimationDuration = a.getInt(
-            com.google.android.material.R.styleable.CollapsingToolbarLayout_scrimAnimationDuration,
-            DEFAULT_SCRIM_ANIMATION_DURATION
-        ).toLong()
-        mToolbarId = a.getResourceId(
-            com.google.android.material.R.styleable.CollapsingToolbarLayout_toolbarId,
-            -1
-        )
-        a.recycle()
-        setWillNotDraw(false)
-        ViewCompat.setOnApplyWindowInsetsListener(
-            this
-        ) { _, insets -> onWindowInsetChanged(insets) }
     }
 }

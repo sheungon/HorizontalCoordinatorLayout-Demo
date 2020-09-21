@@ -24,12 +24,15 @@ import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.core.math.MathUtils
 import androidx.core.view.ViewCompat
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * See [HeaderScrollingViewBehavior].
  * Support horizontal touch scrolling.
  * For View on touch moving event and fling events.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class HorizontalHeaderBehavior<V : View>
     : ViewOffsetBehavior<V> {
 
@@ -80,7 +83,7 @@ abstract class HorizontalHeaderBehavior<V : View>
                     val pointerIndex = ev.findPointerIndex(activePointerId)
                     if (pointerIndex != -1) {
                         val x = ev.getX(pointerIndex).toInt()
-                        val xDiff = Math.abs(x - mLastMotionX)
+                        val xDiff = abs(x - mLastMotionX)
                         if (xDiff > mTouchSlop) {
                             mIsBeingDragged = true
                             mLastMotionX = x
@@ -126,7 +129,7 @@ abstract class HorizontalHeaderBehavior<V : View>
                 }
                 val x = ev.getX(activePointerIndex).toInt()
                 var dx = mLastMotionX - x
-                if (!mIsBeingDragged && Math.abs(dx) > mTouchSlop) {
+                if (!mIsBeingDragged && abs(dx) > mTouchSlop) {
                     mIsBeingDragged = true
                     if (dx > 0) {
                         dx -= mTouchSlop
@@ -231,7 +234,7 @@ abstract class HorizontalHeaderBehavior<V : View>
         }
         mScroller?.fling(
             leftAndRightOffset, 0,  // curr
-            Math.round(velocityX), 0,  // velocity.
+            velocityX.roundToInt(), 0,  // velocity.
             minOffset, maxOffset,  // x
             0, 0 // y
         )
@@ -275,13 +278,13 @@ abstract class HorizontalHeaderBehavior<V : View>
         }
     }
 
-    private inner class FlingRunnable internal constructor(
+    private inner class FlingRunnable(
         private val mParent: HorizontalCoordinatorLayout,
         private val layout: V
     ) : Runnable {
         override fun run() {
             val scroller = mScroller
-            if (layout != null && scroller != null) {
+            if (scroller != null) {
                 if (scroller.computeScrollOffset()) {
                     setHeaderLeftRightOffset(mParent, layout, scroller.currX)
                     // Post ourselves so that we run on the next animation
